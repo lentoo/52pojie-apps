@@ -1,3 +1,4 @@
 export default {
-  navigationBarTitleText: '云开发 QuickStart'
+  navigationBarTitleText: '吾爱破解',
+  navigationBarBackgroundColor: '#0066CC',
 }

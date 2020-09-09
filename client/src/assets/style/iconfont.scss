@@ -1,0 +1,26 @@
+@font-face {
+  font-family: 'icon';  /* project id 1084439 */
+  src: url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.eot');
+  src: url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1084439_k1qjhhwdwp.svg#icon') format('svg');
+}
+
+/*设置一些样式*/
+.icon {
+  font-family: "icon"; /*需要与@font-face的font-family一样*/
+  color: #9e9595;
+  font-size: 40px;
+}
+.icon-search::before {
+  color: #666;
+  font-size: 30px;
+  content: "\e616"
+}
+.icon-arrow-right::before {
+  // color: #666;
+  font-size: 30px;
+  content: "\e63c"
+}
