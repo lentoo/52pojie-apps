@@ -1,21 +1,52 @@
 import React, { Component } from 'react'
-import Taro, { Config } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { View, Text, Input } from '@tarojs/components'
 import './index.scss'
 
-import Login from '../../components/login/index'
 
-export default class Index extends Component {
+import { Plate, PlateItem} from '../../types'
 
-  componentWillMount () { }
+type IndexComponentState= {
+  plate_list: Plate[]
+}
+export default class Index extends Component<{}, IndexComponentState> {
 
-  componentDidMount () { }
+  constructor(props) {
+    super(props)
+    this.state = {
+      plate_list: []
+    }
+  }
+  componentDidMount () { 
+    this.getPlateListData()
+  }
 
-  componentWillUnmount () { }
+  getPlateListData() {
+    Taro.showLoading()
+    Taro.cloud
+      .callFunction({
+        name: 'home',
+        data: {
+          action: 'get_home_page_data'
+        }
+      })
+      .then(res => {
+        console.log('res', res);
+        this.setState({
+          plate_list: res.result as Plate[]
+        })
+      })
+      .then(() => {
+        Taro.hideLoading()
+      })
+  }
 
-  componentDidShow () { }
+  handlePlateItemClick = (item: PlateItem) => {
+    Taro.navigateTo({
+      url: '/pages/article/detail?link='+item.link + '&type=article_detail'
+    })
+  }
 
-  componentDidHide () { }
 
   renderSearchBox() {
     return (
@@ -28,56 +59,39 @@ export default class Index extends Component {
     )
   }
 
-  renderPlateItem() {
+  renderPlateItem(item: Plate) {
     return (
       <View className='plate'>
         <View className='plate-title'>
-          <Text>新鲜出炉</Text>
+          <Text>{item.name}</Text>
           <Text className='plate-more'>更多<Text className='icon icon-arrow-right'></Text></Text>
         </View>
         <View className='plate-list'>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>1</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>2</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>3</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>4</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>5</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>6</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>7</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>8</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>9</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
-          <View className='plate-item'>
-            <Text className='plate-item-index'>10</Text> <Text className='plate-item-title'>冒险之旅：十字军东征v1.55 官方中文版</Text>
-          </View>
+          {
+            item.list.map((obj, index) => {
+              return (
+                <View className='plate-item' key={index} onClick={() => this.handlePlateItemClick(obj)}>
+                  <Text className='plate-item-index'>{index + 1}</Text> <Text className='plate-item-title'>{obj.text}</Text>
+                </View>
+              )
+            })
+          }
         </View>
       </View>
     )
   }
 
   render () {
+    const { plate_list } = this.state
     return (
       <View className='index'>
         {/* <Login/> */}
         {this.renderSearchBox()}
-        {this.renderPlateItem()}
-        {this.renderPlateItem()}
+        <View className='main'>
+          {
+            plate_list.map(item => (<View key={item.id}>{this.renderPlateItem(item)}</View>))
+          }
+        </View>
       </View>
     )
   }

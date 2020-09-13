@@ -1,0 +1,23 @@
+.article-detail {
+  width: 100vw;
+  min-height: 100vh;
+
+  &-body {
+    margin: 20px;
+    width: 100%;
+  }
+  rich-text {
+    width: 750px;
+    font-size: 26px;
+    line-height: 36px;
+    .rich-text {
+      width: 100vw;
+    }
+  }
+  rich-text .zoom {
+    max-width: 100vw;
+    width: 100% !important;
+    height: auto !important;
+    vertical-align: middle
+  }
+}
