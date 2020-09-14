@@ -26,5 +26,5 @@ export default {
       iconPath: 'assets/images/commons/home-unselect.png',
       selectedIconPath: 'assets/images/commons/home-selected.png'
     }]
-  },
+  }
 }

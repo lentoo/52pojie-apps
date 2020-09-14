@@ -124,7 +124,134 @@ async function getAreasData() {
   console.log(list_data);
   return list_data
 }
+async function getArticleDetailData(url, page) {
 
+  const id = url.split('-')[1]
+
+  const html = await getHtml(url)
+
+  const $ = cheerio.load(html)
+  
+  const $main = $('.res-postfirst')
+
+  const $plate = $('#postlist > table:nth-child(1) > tbody > tr > td.plc.ptm.pbn.vwthd > h1 > a')
+
+  const $title = $('#thread_subject')
+  
+  const $username = $main.find('.favatar .xw1')
+
+  const $avatar = $main.find('.favatar .avatar img')
+
+  const $post_date = $main.find('.authi em')
+
+  const $content = $('.pcb table tr td')
+
+  const $pgs = $('.pgs .pg')
+  let pages = 0
+  let nextUrl = ''
+  if ($pgs.length > 0) {
+    const $span = $pgs.find('label span')
+    const reg = /(\w+)/
+    const matches = reg.exec($span.attr('title'))
+    
+    if (matches) {
+      pages = matches[0]
+      if (Number(page) < Number(pages)) {
+        const arr = url.split('-')
+        nextUrl = `${arr[0]}-${arr[1]}-${Number(page) + 1}-${arr[3]}`
+      }
+    }
+  }
+  const link = url
+
+  let $comments = $('#postlist > div')
+  $comments = $comments.slice(1, $comments.length - 1)
+
+  const comments = []
+  $comments.each((index, comment) => {
+    const $comment = $(comment)
+    const $c_username = $comment.find('.xw1')
+    const $c_avatar = $comment.find('.avatar img')
+    const $c_content = $comment.find('.pcb')
+    const $c_post_date = $comment.find('.authi em')
+    comments.push({
+      username: $c_username.text(),
+      avatar: $c_avatar.attr('src'),
+      content: $c_content.html(),
+      post_date: $c_post_date.text()
+    })
+  })
+  return {
+    id,
+    plate: $plate.text(),
+    title: $title.text(),
+    username: $username.text(),
+    avatar: $avatar.attr('src'),
+    post_date: $post_date.text(),
+    content: $content.html(),
+    link,
+    pages,
+    comments,
+    hasNext: Boolean(nextUrl)
+  }
+}
+
+async function getArticleDetailComments(id, page) {
+  const url = `https://www.52pojie.cn/thread-${id}-${page}-1.html`
+
+  const html = await getHtml(url)
+
+  const $ = cheerio.load(html)
+
+  const $pgs = $('.pgs .pg')
+  let pages = 0
+  let nextUrl = ''
+  if ($pgs.length > 0) {
+    const $span = $pgs.find('label span')
+    const reg = /(\w+)/
+    const matches = reg.exec($span.attr('title'))
+    
+    if (matches) {
+      pages = matches[0]
+      if (Number(page) < Number(pages)) {
+        const arr = url.split('-')
+        nextUrl = `${arr[0]}-${arr[1]}-${Number(page) + 1}-${arr[3]}`
+      }
+    }
+  }
+
+  let $comments = $('#postlist > div')
+  if (page == '1') {
+    $comments = $comments.slice(1, $comments.length - 1)
+  } else {
+    $comments = $comments.slice(0, $comments.length - 1)
+  }
+  console.log($comments.length);
+  const comments = []
+  $comments.each((index, comment) => {
+    const $comment = $(comment)
+    const $c_username = $comment.find('.xw1')
+    const $c_avatar = $comment.find('.avatar img')
+    const $c_content = $comment.find('.pcb')
+    const $c_post_date = $comment.find('.authi em')
+    comments.push({
+      username: $c_username.text(),
+      avatar: $c_avatar.attr('src'),
+      content: $c_content.html(),
+      post_date: $c_post_date.text()
+    })
+  })
+
+  return {
+    comments,
+    id,
+    page,
+    pages,
+
+    hasNext: Boolean(nextUrl)
+  }
+
+}
 function trim(text) {
   if (text && text.trim) {
     return text.trim()
@@ -137,14 +264,16 @@ function trim(text) {
 exports.main = async (event, context) => {
   console.log(event)
   console.log(context)
-
+  const { page, url, id } = event.data
   switch (event.action) {
     case 'get_home_page_data':
       return await getHomePageData()
-      break;
     case 'get_areas_data': 
       return await getAreasData()
-      break
+    case 'get_article_detail_data':
+      return await getArticleDetailData(url, page)
+    case 'get_article_detail_comments_data':
+      return await getArticleDetailComments(id, page)
     default:
       break;
   }

@@ -2,7 +2,31 @@
   {
     "name": "action",
     "value": {
-      "action": "value"
+      "action": "get_article_detail_comments_data",
+      "data": {
+        "id": "1267121",
+        "page": "4"
+      }
+    }
+  },
+  {
+    "name": "get_article_detail_data",
+    "value": {
+      "action": "get_article_detail_data",
+      "data": {
+        "page": "4",
+        "url": "https://www.52pojie.cn/thread-1267121-4-1.html"
+      }
+    }
+  },
+  {
+    "name": "get_article_detail_comments_data",
+    "value": {
+      "action": "get_article_detail_comments_data",
+      "data": {
+        "id": "1267121",
+        "page": "4"
+      }
     }
   }
 ]
