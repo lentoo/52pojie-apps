@@ -124,7 +124,14 @@ async function getAreasData() {
   console.log(list_data);
   return list_data
 }
-async function getArticleDetailData(url, page) {
+function replaceContent(content) {
+  content = content.replace(/ignore_js_op/g, 'div')
+  content = content.replace(/<img(.*?)>/, function(word){
+    return word.replace('src=', 'data-src=').replace('zoomfile', 'src')
+  })
+  return content
+}
+async function getArticleDetailData(url, page = 1) {
 
   const id = url.split('-')[1]
 
@@ -144,7 +151,7 @@ async function getArticleDetailData(url, page) {
 
   const $post_date = $main.find('.authi em')
 
-  const $content = $('.pcb table tr td')
+  const $content = $('.pcb .t_fsz')
 
   const $pgs = $('.pgs .pg')
   let pages = 0
@@ -188,7 +195,7 @@ async function getArticleDetailData(url, page) {
     username: $username.text(),
     avatar: $avatar.attr('src'),
     post_date: $post_date.text(),
-    content: $content.html(),
+    content: replaceContent($content.html()),
     link,
     pages,
     comments,
@@ -264,8 +271,8 @@ function trim(text) {
 exports.main = async (event, context) => {
   console.log(event)
   console.log(context)
-  const { page, url, id } = event.data
-  switch (event.action) {
+  const { page, url, id, action } = event || {}
+  switch (action) {
     case 'get_home_page_data':
       return await getHomePageData()
     case 'get_areas_data': 
