@@ -20,8 +20,13 @@ export interface Article {
   content: string
   link: string
   pages: string
+  diff: DiffImageContent[]
   comments: ArticleCommentItem[]
   hasNext: boolean
+}
+interface DiffImageContent {
+  old: string
+  new: string
 }
 export interface ArticleComment {
   comments: ArticleCommentItem[]

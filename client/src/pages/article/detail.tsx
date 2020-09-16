@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
-import { View, Text , Button, RichText, Image} from '@tarojs/components';
+import { View, Button, RichText, Text} from '@tarojs/components';
 
 import './detail.scss'
-import { Article, ArticleComment, ArticleCommentItem } from 'src/types/plate';
+import { Article, } from 'src/types/plate';
+import UserInfo from './components/UserInfo'
 
 type ArticleDetailProp = {
   link: string
@@ -50,24 +51,63 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
         this.setState({
           result
         })
+
+        
       })
       .finally(() => {
         Taro.hideLoading()
         Taro.hideNavigationBarLoading()
       })
   }
+
+  previewImages = () => {
+    const { result } = this.state
+    const images: string[] = []
+    if (result) {
+      const diff = result.diff
+
+      let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i // 匹配图片中的src
+      diff.forEach(item => {
+        let src = item.new.match(srcReg)
+        if (src) {
+          images.push(src[1])
+        }
+      })
+    }
+    if (images.length > 0) {
+      Taro.previewImage({
+        current: images[0],
+        urls: images
+      })
+      console.log(images);
+      
+    } else {
+      Taro.showToast({
+        title: '未匹配到图片'
+      })
+    }
+  }
   render() {
     const { result } = this.state
     if (!result) {
-      return null
+      return <View></View>
     }
     return (
       <View className='article-detail'>
-        <View>
-          <Image src={result.avatar}></Image>
-          <Text>{result.username}</Text>
+        <UserInfo avatar={result.avatar} username={result.username} />
+        <View className='article-main'>
+          <View>
+            <View >
+              <Text className='article-detail-title'>{result.title}</Text>
+            </View>
+            <View className='article-detail-date'>
+              {result.post_date}
+            </View>
+          </View>
+          <RichText className='article-detail-body' nodes={`<div>${result.content}</div>`}></RichText>
         </View>
-        <RichText className='article-detail-body' nodes={`<div>${result.content}</div>`}></RichText>
+
+        <Button className='btn-float' onClick={this.previewImages}>+</Button>
       </View>
     );
   }
