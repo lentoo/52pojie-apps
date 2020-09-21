@@ -1,0 +1,33 @@
+{
+  "name": "52pojie-apps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "commit": "git-cz",
+    "release": "release-it --no-git.requireUpstream",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+  },
+  "config": {
+		"commitizen": {
+			"path": "cz-conventional-changelog"
+		}
+	},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lentoo/52pojie-apps.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lentoo/52pojie-apps/issues"
+  },
+  "homepage": "https://github.com/lentoo/52pojie-apps#readme",
+  "devDependencies": {
+    "conventional-changelog-cli": "^2.1.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "git-cz": "^4.7.1",
+    "release-it": "^14.0.3"
+  }
+}
