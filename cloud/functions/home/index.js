@@ -124,12 +124,38 @@ async function getAreasData() {
   console.log(list_data);
   return list_data
 }
+function removeDuplicates(arr) {
+  if (arr instanceof Array) {
+    return [...new Set(arr)]
+  }
+  return arr
+}
 function replaceContent(content) {
+  const diff = []
   content = content.replace(/ignore_js_op/g, 'div')
-  content = content.replace(/<img(.*?)>/, function(word){
-    return word.replace('src=', 'data-src=').replace('zoomfile', 'src')
+  content = content.replace(/<img(.*?)>/g, function(word){
+    if (word.indexOf('none.gif') > -1 ){
+      const newContent = word.replace('src=', 'data-none=').replace('zoomfile', 'src')
+      diff.push({
+        old: word,
+        new: newContent
+      })
+      return newContent
+    }
+    return word
   })
-  return content
+
+  const reg_baidu_pan = /((?:https?:\/\/)?(?:yun|pan|eyun)\.baidu\.com\/(?:s\/\w*(((-)?\w*)*)?|share\/\S*\d\w*))/g
+  const baidu_pan_links = removeDuplicates(content.match(reg_baidu_pan) || [])
+  const reg_189_pan = /https?:\/\/cloud\.189\.cn\/t\/(\w*)/g
+  const cloud_189_links = removeDuplicates(content.match(reg_189_pan) || [])
+  const reg_lanzou_pan = /(https?:\/\/(www|pan)\.lanzoux?\.com\/(\w*))/g
+  const lanzou_links = removeDuplicates(content.match(reg_lanzou_pan) || [])
+  return {
+    diff,
+    content,
+    links: [...baidu_pan_links, ...cloud_189_links, ...lanzou_links]
+  }
 }
 async function getArticleDetailData(url, page = 1) {
 
@@ -188,6 +214,7 @@ async function getArticleDetailData(url, page = 1) {
       post_date: $c_post_date.text()
     })
   })
+  const { content, diff, links } = replaceContent($content.html())
   return {
     id,
     plate: $plate.text(),
@@ -195,10 +222,12 @@ async function getArticleDetailData(url, page = 1) {
     username: $username.text(),
     avatar: $avatar.attr('src'),
     post_date: $post_date.text(),
-    content: replaceContent($content.html()),
+    content,
+    diff,
     link,
     pages,
     comments,
+    links,
     hasNext: Boolean(nextUrl)
   }
 }
