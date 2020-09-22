@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text,  Image} from '@tarojs/components';
-import './userinfo.scss'
+import './index.scss'
 
 type UserInfoProp = {
   avatar: string

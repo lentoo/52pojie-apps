@@ -5,6 +5,7 @@ import { View, Button, Image, RichText, Text} from '@tarojs/components'
 import './detail.scss'
 import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
 import UserInfo from './components/UserInfo'
+import Tools from './components/Tools'
 
 type ArticleDetailProp = {
   link: string
@@ -14,6 +15,7 @@ type ArticleDetailState = {
   result?: Article
   comments: ArticleCommentItem[]
   loadingText: string
+  openTools: boolean
 }
 
 export default class ArticleDetail extends Component<ArticleDetailProp, ArticleDetailState> {
@@ -22,7 +24,8 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     this.state = {
       result: undefined,
       comments: [],
-      loadingText: '正在加载中'
+      loadingText: '正在加载中',
+      openTools: false
     }
   }
   $page = 1
@@ -31,7 +34,6 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     this.fetchData()
   }
   onReachBottom() {
-    console.log('onReachBottom');
     if (this.hasNext) {
       this.fetchComments()
     }
@@ -92,13 +94,36 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
         this.setState({
           loadingText: this.hasNext ? '正在加载中' : '没有更多了'
         })
+        Taro.hideLoading()
+        Taro.hideNavigationBarLoading()
       })
-      .finally(() => {
+      .catch(error => {
+        console.log(error);
+        Taro.showToast({
+          title: '吾爱破解论坛友情提醒您：您所访问的页面不存在或者已删除',
+          icon: 'none'
+        })
         Taro.hideLoading()
         Taro.hideNavigationBarLoading()
       })
   }
+  onToolsItemClick = (command: string) => {
+    if (command === 'tools-image') {
+      return this.previewImages()
+    }
 
+    if (command === 'tools-copy-link') {
+      Taro.setClipboardData({
+        data: this.state.result!.link,
+        success: function() {
+          Taro.showToast({
+            title: '链接已复制',
+            icon: 'success'
+          })
+        }
+      })
+    }
+  }
   previewImages = () => {
     const { result } = this.state
     const images: string[] = []
@@ -122,12 +147,13 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       
     } else {
       Taro.showToast({
+        icon: 'none',
         title: '未匹配到图片'
       })
     }
   }
   render() {
-    const { result, comments, loadingText } = this.state
+    const { result, comments, loadingText, openTools } = this.state
     if (!result) {
       return <View></View>
     }
@@ -173,8 +199,22 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
             
           </View>
         </View>
-
-        <Button className='btn-float' onClick={this.previewImages}>+</Button>
+        <Tools 
+          open={openTools} 
+          onModalClick={() => {
+            this.setState({
+              openTools: false
+            })
+          }}
+          onToolsItemClick={this.onToolsItemClick}
+          ></Tools>
+        <Button className='btn-float' onClick={() => {
+          this.setState({
+            openTools: true
+          })
+        }}>
+          <Image className='icon-menu' src={'../../assets/images/commons/icon-menu.png'} />
+        </Button>
       </View>
     );
   }
