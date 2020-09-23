@@ -6,7 +6,7 @@ const iconv = require('iconv-lite')
  * 
  */
 const HOST_NAME = 'https://www.52pojie.cn/'
-
+axios.defaults.timeout = 30000
 async function getHtml(url) {
   const res = await axios.get(url, {
     // 以下为解决中文乱码的主要代码
@@ -154,7 +154,7 @@ function replaceContent(content) {
   return {
     diff,
     content,
-    links: [...baidu_pan_links, ...cloud_189_links, ...lanzou_links]
+    pan_links: [...baidu_pan_links, ...cloud_189_links, ...lanzou_links]
   }
 }
 async function getArticleDetailData(url, page = 1) {
@@ -214,7 +214,7 @@ async function getArticleDetailData(url, page = 1) {
       post_date: $c_post_date.text()
     })
   })
-  const { content, diff, links } = replaceContent($content.html())
+  const { content, diff, pan_links } = replaceContent($content.html())
   return {
     id,
     plate: $plate.text(),
@@ -227,7 +227,7 @@ async function getArticleDetailData(url, page = 1) {
     link,
     pages,
     comments,
-    links,
+    pan_links,
     hasNext: Boolean(nextUrl)
   }
 }

@@ -19,6 +19,7 @@ export interface Article {
   post_date: string
   content: string
   link: string
+  pan_links: string[]
   pages: string
   diff: DiffImageContent[]
   comments: ArticleCommentItem[]

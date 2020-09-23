@@ -7,6 +7,9 @@ import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
 
+
+import ICON_MENU from '../../assets/images/commons/icon-menu.png'
+
 type ArticleDetailProp = {
   link: string
   type: string
@@ -122,6 +125,29 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           })
         }
       })
+      return
+    }
+
+    if (command === 'tools-pan-link') {
+      const pan_links = this.state.result?.pan_links
+      if (pan_links && pan_links.length > 0) {
+        Taro.showActionSheet({
+          itemList: pan_links,
+          success: function(res: any) {
+            console.log(res)
+            const tapIndex = res.tapIndex
+            Taro.setClipboardData({
+              data: pan_links[tapIndex],
+              success: function() {
+                Taro.showToast({
+                  title: '链接已复制',
+                  icon: 'success'
+                })
+              }
+            })
+          }
+        })
+      }
     }
   }
   previewImages = () => {
@@ -213,7 +239,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
             openTools: true
           })
         }}>
-          <Image className='icon-menu' src={'../../assets/images/commons/icon-menu.png'} />
+          <Image className='icon-menu' src={ICON_MENU} />
         </Button>
       </View>
     );
