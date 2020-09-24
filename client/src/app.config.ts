@@ -1,6 +1,7 @@
 export default {
   pages: [
     'pages/index/index',
+    'pages/plate/index',
     'pages/demo/index',
     'pages/article/detail'
   ],
@@ -20,7 +21,14 @@ export default {
       text: "首页",
       iconPath: 'assets/images/commons/home-unselect.png',
       selectedIconPath: 'assets/images/commons/home-selected.png'
-    }, {
+    }, 
+    {
+      pagePath: "pages/plate/index",
+      text: '板块',
+      iconPath: 'assets/images/commons/plate-unselect.png',
+      selectedIconPath: 'assets/images/commons/plate-selected.png'
+    },
+    {
       pagePath: "pages/demo/index",
       text: 'Demo',
       iconPath: 'assets/images/commons/home-unselect.png',
