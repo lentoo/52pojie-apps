@@ -1,0 +1,55 @@
+.plate {
+  &-list {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  &-item {
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 20px;
+    font-size: 26px;
+    &-username {
+      font-size: 26px;
+      color: #333;
+    }
+    &-title {
+      margin-top: 15px;
+      font-size: 30px;
+      color: #333;
+      font-weight: bold;
+    }
+    &-type {
+      color: #0066CC;
+      font-size: 24px;
+    }
+    &-commend {
+      margin-left: 20px;
+    }
+    &-commend,&-views {
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+    }
+    &-icon {
+      width: 30px;
+      height: 30px;
+      margin: 0 10px;
+      &-comment {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+  &-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &-bottom {
+    font-size: 24px;
+    color: #666;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+  }
+}
