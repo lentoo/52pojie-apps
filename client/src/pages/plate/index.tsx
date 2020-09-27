@@ -4,7 +4,7 @@ import { View, Text, Input, Swiper, SwiperItem, Image } from '@tarojs/components
 import './index.scss'
 
 import ICON_ORIGINAL from './images/icon-original.png'
-import ICON_SOFTWOREL from './images/icon-softwore.png'
+import ICON_SOFTWARE from './images/icon-software.png'
 
 import './index.scss'
 type PlateItem = {
@@ -23,10 +23,10 @@ export default class Index extends Component<{}, PlateState> {
         {
           src: ICON_ORIGINAL,
           text: '原创发布区',
-          id: 2
+          id: 2,
         },
         {
-          src: ICON_SOFTWOREL,
+          src: ICON_SOFTWARE,
           text: '精品软件区',
           id: 16
         },
@@ -83,6 +83,11 @@ export default class Index extends Component<{}, PlateState> {
       ]
     }
   }
+  handleIconClick = (item: PlateItem) => {
+    Taro.navigateTo({
+      url: `/pages/plate/list/index?plateId=${item.id}&title=${item.text}`
+    })    
+  }
   render () {
     const { plate_list } = this.state
     return (
@@ -95,7 +100,7 @@ export default class Index extends Component<{}, PlateState> {
           {
             plate_list.map(item => {
               return (
-                <View key={item.id} className='plate-item'>
+                <View key={item.id} className='plate-item' onClick={() => this.handleIconClick(item)}>
                   <Image className='plate-item-image' src={item.src}></Image>
                   <View className='plate-item-text'>
                     <Text>{item.text}</Text>

@@ -3,7 +3,8 @@ export default {
     'pages/index/index',
     'pages/plate/index',
     'pages/demo/index',
-    'pages/article/detail'
+    'pages/article/detail',
+    'pages/plate/list/index'
   ],
   window: {
     backgroundTextStyle: 'light',
