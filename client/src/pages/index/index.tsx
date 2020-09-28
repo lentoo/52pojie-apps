@@ -20,10 +20,16 @@ export default class Index extends Component<{}, IndexComponentState> {
   componentDidMount () { 
     this.getPlateListData()
   }
+  onPullDownRefresh() {
+    this.getPlateListData()
+      .then(() => {
+        Taro.stopPullDownRefresh()
+      })
+  }
 
   getPlateListData() {
     Taro.showLoading()
-    Taro.cloud
+    return Taro.cloud
       .callFunction({
         name: 'home',
         data: {

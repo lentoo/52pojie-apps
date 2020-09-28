@@ -149,6 +149,10 @@ function replaceContent(content) {
     }
     return word
   })
+  content = content.replace(/<pre(.*?)>/g, function(word) {
+    word = word.replace(/(class=[\w\W]*")/, 'class="pre-code"')
+    return word
+  })
 
   const reg_baidu_pan = /((?:https?:\/\/)?(?:yun|pan|eyun)\.baidu\.com\/(?:s\/\w*(((-)?\w*)*)?|share\/\S*\d\w*))/g
   const baidu_pan_links = removeDuplicates(content.match(reg_baidu_pan) || [])

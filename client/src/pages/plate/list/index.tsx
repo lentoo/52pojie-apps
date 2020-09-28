@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { View, Text, Image } from "@tarojs/components";
-import Taro, { useRouter, useReachBottom } from '@tarojs/taro';
+import Taro, { useRouter, useReachBottom, usePullDownRefresh } from '@tarojs/taro';
 import LoadingMore from '../../../components/LoadingMore'
 import ICON_VIEWS from '../images/icon-views.png'
 import ICON_COMMENT from '../images/icon-comment.png'
@@ -48,13 +48,17 @@ export default function PlateList() {
         data: requestData
       }
     }).then(res => {
-      setPlateList([...plate_list, ...res.result as PlateItem[]])
+      if (page === 1) {
+        setPlateList(res.result as PlateItem[])
+      } else {
+        setPlateList([...plate_list, ...res.result as PlateItem[]])
+      }
     })
   }
 
   useEffect(() => {
     Taro.showLoading({
-      title: 'loading'
+      title: 'Loading...'
     })
     fetchData()
       .then(() => {
@@ -64,6 +68,16 @@ export default function PlateList() {
         Taro.hideLoading()
       })
   }, [])
+
+  usePullDownRefresh(() => {
+    fetchData()
+    .then(() => {
+      Taro.stopPullDownRefresh()
+    })
+    .catch(err => {
+      Taro.stopPullDownRefresh()
+    })
+  })
 
   const handleItemClick = useCallback((item: PlateItem) => {
     Taro.navigateTo({

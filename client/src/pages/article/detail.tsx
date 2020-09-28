@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
-import { View, Button, Image, RichText, Text} from '@tarojs/components'
+import { View, Image, RichText, Text} from '@tarojs/components'
 import classnames from 'classnames'
 
 import './detail.scss'
 import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
 import LoadMore from '../../components/LoadingMore'
+import FloatButton from '../../components/FloatButton'
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
-
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
 import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
@@ -23,6 +23,7 @@ type ArticleDetailState = {
   loadingText: string
   openTools: boolean
   showToTopBtn: boolean
+  animate: boolean
 }
 
 export default class ArticleDetail extends Component<ArticleDetailProp, ArticleDetailState> {
@@ -33,13 +34,19 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       comments: [],
       loadingText: '正在加载中',
       openTools: false,
-      showToTopBtn: false
+      showToTopBtn: false,
+      animate: false
     }
   }
   $page = 1
   hasNext = false
   componentDidMount() {
     this.fetchData()
+    setTimeout(() => {
+      this.setState({
+        animate: true
+      })
+    }, 1000)
   }
   onPageScroll(e) {
     if (!this.state.showToTopBtn && e.scrollTop > 500) {
@@ -54,6 +61,12 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
         showToTopBtn: false
       })
     }
+  }
+  onPullDownRefresh() {
+    this.fetchData()
+      ?.then(() => {
+        Taro.stopPullDownRefresh()
+      })
   }
   onReachBottom() {
     if (this.hasNext) {
@@ -93,11 +106,11 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       return
     }
     Taro.showLoading({
-      title: 'Loading'
+      title: 'Loading...'
     })
     Taro.showNavigationBarLoading()
 
-    Taro.cloud.callFunction({
+    return Taro.cloud.callFunction({
       name: 'home',
       data: {
         action: 'get_article_detail_data',
@@ -198,7 +211,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
   }
   render() {
-    const { result, comments, loadingText, openTools, showToTopBtn } = this.state
+    const { result, comments, loadingText, openTools, showToTopBtn, animate } = this.state
     if (!result) {
       return <View></View>
     }
@@ -252,22 +265,22 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           }}
           onToolsItemClick={this.onToolsItemClick}
           ></Tools>
-        <Button className='btn-float' onClick={() => {
+
+        <FloatButton bottom={205} right={40} icon={ICON_MENU} onClick={() => {
           this.setState({
             openTools: true
           })
-        }}>
-          <Image className='icon-menu' src={ICON_MENU} />
-        </Button>
-        <Button 
-          className={classnames('btn-float btn-float-to-top',
-            showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')
-          } 
+        }} />
+
+        <FloatButton 
+          className={ classnames(animate && showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')}
+          bottom={100}
+          right={-140}
+          icon={ICON_TO_TOP}
           onClick={() => {
-          Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
-        }}>
-          <Image className='icon-to-top' src={ICON_TO_TOP} />
-        </Button>
+            Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
+          }}
+        />
       </View>
     );
   }

@@ -21,12 +21,21 @@
   &-body {
     width: 750px;
     font-size: 26px;
-    line-height: 1.5em;
+    // line-height: 1.5em;
     padding: 20px;
-    word-wrap: break-word;
-    pre {
-      width: 100%;
+    word-wrap: break-all;
+    // white-space: pre-wrap;
+    // & * {
+    //   white-space: pre;
+    // }
+    .pre-code {
+      background-color: #1b2426 !important;
+      line-height: 1.3em;
+      color: #ffaa3e;
+      width: 95vw;
       overflow-x: auto;
+      padding: 10px;
+      box-sizing: border-box;
     }
     .pstatus {
       font-size: 24px;
@@ -44,7 +53,7 @@
       font-size: 24px !important;
     }
     .zoom {
-      max-width: 100vw;
+      max-width: 95vw;
       width: 100% !important;
       height: auto !important;
       vertical-align: middle
@@ -54,6 +63,8 @@
 .article-main {
   padding: 20px;
   background-color: #fff;
+  overflow-x: auto;
+
 }
 .article-comments {
   margin-top: 20px;
@@ -116,48 +127,14 @@
 .ali-center {
   align-items: center;
 }
-$btn-float-size: 90px;
-.btn-float {
-  
-  position: fixed;
-  width: $btn-float-size;
-  height: $btn-float-size;
-  border-radius: 50%;
-  right: 40px;
-  bottom: 205px;
-  color: #0099CC;
-  box-sizing: border-box;
-  border: 0;
-  padding: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  overflow: hidden;
-  background-color: #fff;
-  box-shadow: 0px 0px 20px #ebebeb;
-  font-size: 40px;
-  .icon-menu,.icon-to-top {
-    width: 36px;
-    height: 36px;
-  }
-  &-to-top {
-    right: -140px;
-    bottom: 100px; 
-  }
-  &::before, &::after {
-    display: none;
-  }
-  &:active {
-    background-color: rgba($color: #999, $alpha: .8);
-  }
 
-  &.ani-btn-to-top {
-    animation: ani-btn-to-top ease-in-out 1s forwards;
-  }
-  &.ani-btn-to-top-hidden {
-    animation: ani-btn-to-top-hidden ease-in-out 1s forwards;
-  }
+.ani-btn-to-top {
+  animation: ani-btn-to-top ease-in-out 1s forwards;
 }
+.ani-btn-to-top-hidden {
+  animation: ani-btn-to-top-hidden ease-in-out 1s forwards;
+}
+
 
 @keyframes ani-btn-to-top {
   0% {
