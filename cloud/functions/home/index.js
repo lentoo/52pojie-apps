@@ -52,10 +52,11 @@ async function getHomePageData () {
 
   const $ = cheerio.load(result, { decodeEntities: false })
 
-  const homeTabs = $('.toptitle_7ree a')
+  let homeTabs = $('.toptitle_7ree a')
   const tabs = []
-
+  
   homeTabs.each((index, tab) => {
+    if (index === homeTabs.length - 1) return
     let title = $(tab).text()
     if (title && title.indexOf('（') > -1) {
       title = title.split('（')[0]
@@ -71,6 +72,7 @@ async function getHomePageData () {
   
   const tds = $('#category_ .fl_row td')
   tds.each((index, td) => {
+    if (index === tds.length - 1) return
     const list_box = $(td).find('.threadline_7ree')
     const list_item = list_box.map((i, item) => {
       const a = $(item).find('a')
@@ -131,7 +133,10 @@ function removeDuplicates(arr) {
   return arr
 }
 function replaceContent(content) {
+  if (!content) return {}
+  
   const diff = []
+
   content = content.replace(/ignore_js_op/g, 'div')
   content = content.replace(/<img(.*?)>/g, function(word){
     if (word.indexOf('none.gif') > -1 ){
@@ -177,8 +182,10 @@ async function getArticleDetailData(url, page = 1) {
 
   const $post_date = $main.find('.authi em')
 
-  const $content = $('.pcb .t_fsz')
-
+  let $content = $('.pcb .t_fsz')
+  if ($content.length === 0) {
+    $content = $('.pcb .rwdn')
+  }
   const $pgs = $('.pgs .pg')
   let pages = 0
   let nextUrl = ''
@@ -205,8 +212,13 @@ async function getArticleDetailData(url, page = 1) {
     const $comment = $(comment)
     const $c_username = $comment.find('.favatar .authi .xw1')
     const $c_avatar = $comment.find('.avatar img')
-    const $c_content = $comment.find('.pcb .t_fsz')
+    let $c_content = $comment.find('.pcb .t_fsz')
     const $c_post_date = $comment.find('.authi em')
+
+    if ($c_content.length === 0) {
+      $c_content = $comment.find('.pcb .pcbs')
+    }
+
     comments.push({
       username: $c_username.text(),
       avatar: $c_avatar.attr('src'),
