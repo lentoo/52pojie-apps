@@ -203,9 +203,9 @@ async function getArticleDetailData(url, page = 1) {
   const comments = []
   $comments.each((index, comment) => {
     const $comment = $(comment)
-    const $c_username = $comment.find('.xw1')
+    const $c_username = $comment.find('.favatar .authi .xw1')
     const $c_avatar = $comment.find('.avatar img')
-    const $c_content = $comment.find('.pcb')
+    const $c_content = $comment.find('.pcb .t_fsz')
     const $c_post_date = $comment.find('.authi em')
     comments.push({
       username: $c_username.text(),
@@ -266,9 +266,9 @@ async function getArticleDetailComments(id, page) {
   const comments = []
   $comments.each((index, comment) => {
     const $comment = $(comment)
-    const $c_username = $comment.find('.xw1')
+    const $c_username = $comment.find('.favatar .authi .xw1')
     const $c_avatar = $comment.find('.avatar img')
-    const $c_content = $comment.find('.pcb')
+    const $c_content = $comment.find('.pcb .t_fsz')
     const $c_post_date = $comment.find('.authi em')
     comments.push({
       username: $c_username.text(),
