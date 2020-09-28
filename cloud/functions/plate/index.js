@@ -46,6 +46,7 @@ async function getHtml(url) {
 }
 
 async function getPlateList(plateId, page = 1) {
+
   const url = `${HOST_NAME}forum-${plateId}-${page}.html?t=${Date.now()}`
 
   const htmlStr = await getHtml(url)
@@ -54,7 +55,7 @@ async function getPlateList(plateId, page = 1) {
 
   const plate_list = []
 
-  const $tbodys = $('#threadlist #threadlisttableid tbody')
+  const $tbodys = $('#threadlist .bm_c tbody')
 
   $tbodys.each((index, tbody) => {
     const $tbody = $(tbody)
@@ -96,6 +97,59 @@ async function getPlateList(plateId, page = 1) {
   return plate_list
 }
 
+async function getPlateListByGuide(openUrl, page = 1) {
+
+  let url = decodeURIComponent(openUrl)
+  url += '&page=' + page
+  const htmlStr = await getHtml(url)
+  console.log('get', url);
+  const $ = cheerio.load(htmlStr)
+
+  const plate_list = []
+
+  const $tbodys = $('#threadlist .bm_c tbody')
+
+  $tbodys.each((index, tbody) => {
+    const $tbody = $(tbody)
+    // 过滤分割线
+    if (!$tbody.attr('id')) return
+
+    if ($tbody.attr('id') === 'separatorline') return
+    // 过滤置顶贴
+    if (!$tbody.attr('id').startsWith('normalthread')) return
+
+    const id = $tbody.attr('id').split('_')[1]
+    
+    const title = $tbody.find('.common a').text()
+    // #normalthread_1233028 > tr > td:nth-child(3) > cite > a
+    const type = $tbody.find('td.by').first().find('a').text().trim()
+    const link =  HOST_NAME + $tbody.find('.common a').attr('href')
+    const author = $($tbody.find('td.by').get(1)).find('cite a').text()
+    const post_date =$($tbody.find('td.by').get(1)).find('em span').text()
+    const commentNum = $tbody.find('td.num a').text()
+    const viewNum = $tbody.find('td.num em').text()
+
+    const hasRecommend = $tbody.find('.new').has('[alt=recommend]').length > 0
+    const hasHot = $tbody.find('.new').has('[alt=heatlevel]').length > 0
+    const hasNew = $tbody.find('.new').has('.xi1').length > 0
+    plate_list.push({
+      id,
+      type,
+      title,
+      link,
+      hasRecommend,
+      hasHot,
+      author,
+      post_date,
+      commentNum,
+      viewNum,
+      hasNew
+    })
+  })
+  console.log(plate_list);
+  return plate_list
+}
+
 exports.main = async (event, context) => {
   const { page, url, data, action } = event || {}
 
@@ -103,7 +157,9 @@ exports.main = async (event, context) => {
     case 'get_plate_list_data':
       return getPlateList(data.plateId, data.page)
       break;
-  
+      case 'get_plate_list_data_by_guide':
+        return getPlateListByGuide(data.openUrl, data.page)
+        break;
     default:
       break;
   }

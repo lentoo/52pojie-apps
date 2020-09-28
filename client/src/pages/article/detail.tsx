@@ -5,6 +5,7 @@ import classnames from 'classnames'
 
 import './detail.scss'
 import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
+import LoadMore from '../../components/LoadingMore'
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
 
@@ -215,9 +216,11 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           </View>
           <RichText className='article-detail-body' nodes={`<div>${result.content}</div>`}></RichText>
         </View>
-
         <View className='article-comments'>
-          <View className='comments-title'>评论</View>
+          {
+            comments.length > 0 && <View className='comments-title'>评论</View>
+          }
+          
           <View className='comments-list'>
             {
               comments.map((item, index) => {
@@ -236,11 +239,8 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
                 )
               })
             }
+            <LoadMore loadingText={loadingText} />
 
-            <View className='loading-more'>
-              <Text>{loadingText}</Text>
-            </View>
-            
           </View>
         </View>
         <Tools 
@@ -260,7 +260,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           <Image className='icon-menu' src={ICON_MENU} />
         </Button>
         <Button 
-          className={classnames('btn-float btn-float-to-top', 
+          className={classnames('btn-float btn-float-to-top',
             showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')
           } 
           onClick={() => {

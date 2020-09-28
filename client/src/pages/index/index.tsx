@@ -47,6 +47,14 @@ export default class Index extends Component<{}, IndexComponentState> {
     })
   }
 
+  handleMoreClick = (item: Plate) => {
+    console.log('/pages/plate/list/index?link='+item.more_link + '&title=' + item.name);
+    
+    Taro.navigateTo({
+      url: '/pages/plate/list/index?link='+ encodeURIComponent(item.more_link) + '&title=' + item.name
+    })
+  }
+
 
   renderSearchBox() {
     return (
@@ -64,7 +72,7 @@ export default class Index extends Component<{}, IndexComponentState> {
       <View className='plate'>
         <View className='plate-title'>
           <Text>{item.name}</Text>
-          <Text className='plate-more'>更多<Text className='icon icon-arrow-right'></Text></Text>
+          <Text className='plate-more' onClick={() => this.handleMoreClick(item)}>更多<Text className='icon icon-arrow-right'></Text></Text>
         </View>
         <View className='plate-list'>
           {

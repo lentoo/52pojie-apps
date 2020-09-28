@@ -8,7 +8,8 @@ import './index.scss'
 
 
 enum PlateActions {
-  GET_PLATE_LIST_DATA = 'get_plate_list_data'
+  GET_PLATE_LIST_DATA = 'get_plate_list_data',
+  GET_PLATE_LIST_DATA_BY_GUIDE = 'get_plate_list_data_by_guide'
 }
 interface PlateItem {
   id: string
@@ -25,22 +26,26 @@ interface PlateItem {
 }
 export default function PlateList() {
   
-  const { title, plateId } = useRouter().params
+  const { title, plateId, link } = useRouter().params
 
   const [ plate_list, setPlateList ] = useState<PlateItem[]>([])
   useEffect(() => {
-    Taro.setNavigationBarTitle({ title })
-  }, [])
+    Taro.setNavigationBarTitle({ title: title || '' })
+  }, [title])
 
   const fetchData = (page = 1) => {
+    const requestData: any = { page }
+    if (plateId) {
+      requestData.plateId = plateId
+    }
+    if (link) {
+      requestData.openUrl = link
+    }
     return Taro.cloud.callFunction({
       name: 'plate',
       data: {
-        action: PlateActions.GET_PLATE_LIST_DATA,
-        data: {
-          plateId: plateId,
-          page
-        }
+        action: link ? PlateActions.GET_PLATE_LIST_DATA_BY_GUIDE : PlateActions.GET_PLATE_LIST_DATA,
+        data: requestData
       }
     }).then(res => {
       setPlateList([...plate_list, ...res.result as PlateItem[]])
@@ -83,7 +88,7 @@ export default function PlateList() {
                 </View>
                 { item.type && 
                 <View className='plate-item-type'>
-                  [{item.type}]
+                  {item.type.startsWith('『') ? item.type : `[${item.type}]`}
                 </View>
                 }
               </View>
