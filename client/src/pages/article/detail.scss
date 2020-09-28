@@ -93,6 +93,7 @@
       word-wrap: break-word;
       .quote {
         display: block;
+        box-sizing: border-box;
         width: 100%;
         background-color: #f9f9f9;
         padding: 20px;
@@ -125,7 +126,7 @@ $btn-float-size: 90px;
   height: $btn-float-size;
   border-radius: 50%;
   right: 40px;
-  bottom: 100px;
+  bottom: 205px;
   color: #0099CC;
   box-sizing: border-box;
   border: 0;
@@ -137,14 +138,50 @@ $btn-float-size: 90px;
   background-color: #fff;
   box-shadow: 0px 0px 20px #ebebeb;
   font-size: 40px;
-  .icon-menu {
+  .icon-menu,.icon-to-top {
     width: 36px;
     height: 36px;
+  }
+  &-to-top {
+    right: -140px;
+    bottom: 100px; 
   }
   &::before, &::after {
     display: none;
   }
   &:active {
     background-color: rgba($color: #999, $alpha: .8);
+  }
+
+  &.ani-btn-to-top {
+    animation: ani-btn-to-top ease-in-out 1s forwards;
+  }
+  &.ani-btn-to-top-hidden {
+    animation: ani-btn-to-top-hidden ease-in-out 1s forwards;
+  }
+}
+
+@keyframes ani-btn-to-top {
+  0% {
+    right: -140px;
+    opacity: 0;
+  }
+  80% {
+    right: 50px;
+    opacity: 1;
+  }
+  to {
+    right: 40px;
+  }
+}
+@keyframes ani-btn-to-top-hidden {
+  0% {
+    right: 50px;
+    opacity: 1;
+  }
+  
+  to {
+    right: -140px;
+    opacity: 0;
   }
 }

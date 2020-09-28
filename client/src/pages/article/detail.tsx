@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { View, Button, Image, RichText, Text} from '@tarojs/components'
+import classnames from 'classnames'
 
 import './detail.scss'
 import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
@@ -9,6 +10,7 @@ import Tools from './components/Tools'
 
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
+import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
 
 type ArticleDetailProp = {
   link: string
@@ -19,6 +21,7 @@ type ArticleDetailState = {
   comments: ArticleCommentItem[]
   loadingText: string
   openTools: boolean
+  showToTopBtn: boolean
 }
 
 export default class ArticleDetail extends Component<ArticleDetailProp, ArticleDetailState> {
@@ -28,13 +31,28 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       result: undefined,
       comments: [],
       loadingText: '正在加载中',
-      openTools: false
+      openTools: false,
+      showToTopBtn: false
     }
   }
   $page = 1
   hasNext = false
   componentDidMount() {
     this.fetchData()
+  }
+  onPageScroll(e) {
+    if (!this.state.showToTopBtn && e.scrollTop > 500) {
+      this.setState({
+        showToTopBtn: true
+      })
+      return
+    }
+
+    if (this.state.showToTopBtn && e.scrollTop <= 500) {
+      this.setState({
+        showToTopBtn: false
+      })
+    }
   }
   onReachBottom() {
     if (this.hasNext) {
@@ -179,7 +197,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
   }
   render() {
-    const { result, comments, loadingText, openTools } = this.state
+    const { result, comments, loadingText, openTools, showToTopBtn } = this.state
     if (!result) {
       return <View></View>
     }
@@ -240,6 +258,15 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           })
         }}>
           <Image className='icon-menu' src={ICON_MENU} />
+        </Button>
+        <Button 
+          className={classnames('btn-float btn-float-to-top', 
+            showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')
+          } 
+          onClick={() => {
+          Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
+        }}>
+          <Image className='icon-to-top' src={ICON_TO_TOP} />
         </Button>
       </View>
     );
