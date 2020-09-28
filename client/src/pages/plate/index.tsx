@@ -5,6 +5,16 @@ import './index.scss'
 
 import ICON_ORIGINAL from './images/icon-original.png'
 import ICON_SOFTWARE from './images/icon-software.png'
+import ICON_WATER from './images/icon-water.png'
+import ICON_VIRUS from './images/icon-virus.png'
+import ICON_WELFARE from './images/icon-welfare.png'
+import ICON_SAFETY from './images/icon-safety.png'
+import ICON_CODE from './images/icon-code.png'
+import ICON_ANIMATE from './images/icon-animate.png'
+import ICON_UTIL from './images/icon-util.png'
+import ICON_EGG from './images/icon-egg.png'
+import ICON_REVERSE from './images/icon-reverse.png'
+import ICON_VIRUS_ANALYSIS from './images/icon-virus-analysis.png'
 
 import './index.scss'
 type PlateItem = {
@@ -31,52 +41,52 @@ export default class Index extends Component<{}, PlateState> {
           id: 16
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_REVERSE,
           text: '逆向资源区',
           id: 4
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_WATER,
           text: '水漫金山区',
           id: 10
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_VIRUS,
           text: '病毒救援区',
           id: 50
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_WELFARE,
           text: '福利经验区',
           id: 66
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_EGG,
           text: '脱壳破解区',
           id: 5
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_SAFETY,
           text: '移动安全区',
           id: 65
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_VIRUS_ANALYSIS,
           text: '病毒分析区',
           id: 32
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_CODE,
           text: '编程语言区',
           id: 24
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_ANIMATE,
           text: '动画发布区',
           id: 6
         },
         {
-          src: ICON_ORIGINAL,
+          src: ICON_UTIL,
           text: '安全工具区',
           id: 41
         }
@@ -92,9 +102,9 @@ export default class Index extends Component<{}, PlateState> {
     const { plate_list } = this.state
     return (
       <View>
-        <Swiper>
+        {/* <Swiper>
           <SwiperItem>1</SwiperItem>
-        </Swiper>
+        </Swiper> */}
 
         <View className='plate-list'>
           {
