@@ -1,17 +1,18 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { View, Image, RichText, Text} from '@tarojs/components'
-import classnames from 'classnames'
+
 
 import './detail.scss'
 import { Article, ArticleCommentItem, ArticleComment } from 'src/types/plate';
 import LoadMore from '../../components/LoadingMore'
 import FloatButton from '../../components/FloatButton'
+import FloatButtonToTop from '../../components/FloatButtonToTop'
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
-import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
+// import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
 
 type ArticleDetailProp = {
   link: string
@@ -42,6 +43,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   hasNext = false
   componentDidMount() {
     this.fetchData()
+
     setTimeout(() => {
       this.setState({
         animate: true
@@ -129,9 +131,14 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
         this.setState({
           loadingText: this.hasNext ? '正在加载中' : '没有更多了'
         })
+
+        Taro.setNavigationBarTitle({
+          title: result.title
+        })
+
         Taro.hideLoading()
         Taro.hideNavigationBarLoading()
-      })
+      })      
       .catch(error => {
         console.log(error);
         Taro.showToast({
@@ -227,6 +234,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
               {result.post_date}
             </View>
           </View>
+          {/* <parser-wx className='article-detail-body' html={result.content} selectable={true}/> */}
           <RichText className='article-detail-body' nodes={`<div>${result.content}</div>`}></RichText>
         </View>
         <View className='article-comments'>
@@ -272,7 +280,9 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           })
         }} />
 
-        <FloatButton 
+        <FloatButtonToTop />
+
+        {/* <FloatButton 
           className={ classnames(animate && showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')}
           bottom={100}
           right={-140}
@@ -280,7 +290,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           onClick={() => {
             Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
           }}
-        />
+        /> */}
       </View>
     );
   }

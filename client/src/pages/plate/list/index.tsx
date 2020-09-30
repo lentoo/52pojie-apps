@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { View, Text, Image } from "@tarojs/components";
 import Taro, { useRouter, useReachBottom, usePullDownRefresh } from '@tarojs/taro';
+
 import LoadingMore from '../../../components/LoadingMore'
+import FloatButtonToTop from '../../../components/FloatButtonToTop'
+
 import ICON_VIEWS from '../images/icon-views.png'
 import ICON_COMMENT from '../images/icon-comment.png'
+import ICON_NEW from '../images/icon-new.png'
 import './index.scss'
 
 
@@ -95,7 +99,7 @@ export default function PlateList() {
       <View className='plate-list'>
         {
           plate_list.map(item => {
-            return <View key={item.id} className='plate-item' onClick={() => handleItemClick(item)}>
+            return <View key={'index' + item.id} className='plate-item' onClick={() => handleItemClick(item)}>
               <View className='plate-top'>
                 <View className='plate-item-username'>
                   {item.author}
@@ -107,7 +111,14 @@ export default function PlateList() {
                 }
               </View>
               
-              <View className='plate-item-title'><Text>{item.title}</Text></View>
+              <View className='plate-item-title'>
+                <Text>{item.title}</Text>
+
+                {
+                  // item.hasNew && <Image className='icon-new' src={ICON_NEW} />
+                }
+                
+              </View>
               
               <View className='plate-bottom'>
                 <View className='plate-item-date'>{item.post_date}</View>
@@ -125,6 +136,16 @@ export default function PlateList() {
         }
         <LoadingMore loadingText={'正在加载中'} />
       </View>
+      <FloatButtonToTop />
+      {/* <FloatButton 
+        // className={ classnames(animate && showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')}
+        bottom={100}
+        right={40}
+        icon={ICON_TO_TOP}
+        onClick={() => {
+          Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
+        }}
+      /> */}
       
     </View>
   )

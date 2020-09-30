@@ -1,0 +1,31 @@
+@keyframes ani-btn-to-top {
+  0% {
+    right: -140px;
+    opacity: 0;
+  }
+  80% {
+    right: 50px;
+    opacity: 1;
+  }
+  to {
+    right: 40px;
+  }
+}
+@keyframes ani-btn-to-top-hidden {
+  0% {
+    right: 50px;
+    opacity: 1;
+  }
+  
+  to {
+    right: -140px;
+    opacity: 0;
+  }
+}
+
+.ani-btn-to-top {
+  animation: ani-btn-to-top ease-in-out 1s forwards;
+}
+.ani-btn-to-top-hidden {
+  animation: ani-btn-to-top-hidden ease-in-out 1s forwards;
+}
