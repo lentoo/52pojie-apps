@@ -73,7 +73,14 @@ export default function PlateList() {
       })
   }, [])
 
+  const page = useRef<number>(1)
+  useReachBottom(() => {
+    page.current++
+    fetchData(page.current)
+  })
+
   usePullDownRefresh(() => {
+    page.current = 1
     fetchData()
     .then(() => {
       Taro.stopPullDownRefresh()
@@ -89,11 +96,7 @@ export default function PlateList() {
     })
   }, [])
 
-  const page = useRef<number>(1)
-  useReachBottom(() => {
-    page.current++
-    fetchData(page.current)
-  })
+  
   return (
     <View>
       <View className='plate-list'>

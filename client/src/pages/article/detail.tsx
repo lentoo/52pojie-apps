@@ -65,6 +65,9 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
   }
   onPullDownRefresh() {
+    
+    this.$page = 1
+
     this.fetchData()
       ?.then(() => {
         Taro.stopPullDownRefresh()
