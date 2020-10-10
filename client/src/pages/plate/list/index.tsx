@@ -27,6 +27,8 @@ interface PlateItem {
   hasHot: boolean
   hasNew: boolean
   hasRecommend: boolean
+  money: string | number,
+  hasResolve: boolean
 }
 export default function PlateList() {
   
@@ -109,6 +111,15 @@ export default function PlateList() {
                 </View>
                 { item.type && 
                 <View className='plate-item-type'>
+                  {
+                    item.money !== -1 
+                      && <Text className='money'>
+                        悬赏 {item.money} CB吾爱币
+                      </Text>
+                  }
+                  {
+                    item.hasResolve && <Text className='resolve'>已解决</Text>
+                  }
                   {item.type.startsWith('『') ? item.type : `[${item.type}]`}
                 </View>
                 }

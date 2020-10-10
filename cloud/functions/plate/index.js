@@ -135,6 +135,9 @@ async function getPlateListByGuide(openUrl, page = 1) {
     const hasRecommend = $tbody.find('.new').has('[alt=recommend]').length > 0
     const hasHot = $tbody.find('.new').has('[alt=heatlevel]').length > 0
     const hasNew = $tbody.find('.new').has('.xi1').length > 0
+    
+    const money = $tbody.find('.common .xw1').html() || -1
+    const hasResolve = $tbody.find('.common').text().indexOf('[已解决]') > -1
     plate_list.push({
       id,
       type,
@@ -146,7 +149,9 @@ async function getPlateListByGuide(openUrl, page = 1) {
       post_date,
       commentNum,
       viewNum,
-      hasNew
+      hasNew,
+      money,
+      hasResolve
     })
   })
   console.log(plate_list);
