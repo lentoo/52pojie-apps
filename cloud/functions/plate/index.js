@@ -93,6 +93,9 @@ async function getPlateList(plateId, page = 1) {
       hasNew
     })
   })
+  if (plateId === '66' && page === 1) {
+    plate_list.shift()
+  }
   console.log(plate_list);
   return plate_list
 }

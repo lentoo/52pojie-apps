@@ -69,6 +69,12 @@
           "pathName": "pages/article/detail",
           "query": "link=https://www.52pojie.cn/thread-1272325-1-1.html&type=article_detail",
           "scene": null
+        },
+        {
+          "id": -1,
+          "name": "pages/me/index",
+          "pathName": "pages/me/index",
+          "scene": null
         }
       ]
     }
