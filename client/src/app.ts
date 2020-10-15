@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Taro, { Config } from '@tarojs/taro'
 
+import { checkAppUpdate } from './utils'
 import './app.scss'
 
 class App extends Component {
@@ -11,7 +12,9 @@ class App extends Component {
     }
   }
 
-  componentDidShow () {}
+  componentDidShow () {
+    checkAppUpdate()
+  }
 
   componentDidHide () {}
 
