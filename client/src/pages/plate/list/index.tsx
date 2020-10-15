@@ -32,7 +32,7 @@ interface PlateItem {
 }
 export default function PlateList() {
   
-  const { title, plateId, link } = useRouter().params
+  const { title, plateId, link, reward } = useRouter().params
 
   const [ plate_list, setPlateList ] = useState<PlateItem[]>([])
   useEffect(() => {
@@ -46,6 +46,9 @@ export default function PlateList() {
     }
     if (link) {
       requestData.openUrl = link
+    }
+    if (reward) {
+      requestData.reward = Number(reward) 
     }
     return Taro.cloud.callFunction({
       name: 'plate',
@@ -64,7 +67,7 @@ export default function PlateList() {
 
   useEffect(() => {
     Taro.showLoading({
-      title: 'Loading...'
+      title: 'Loading'
     })
     fetchData()
       .then(() => {
@@ -94,7 +97,7 @@ export default function PlateList() {
 
   const handleItemClick = useCallback((item: PlateItem) => {
     Taro.navigateTo({
-      url: '/pages/article/detail?link=' + item.link
+      url: '/pages/article/detail?link=' + encodeURIComponent(item.link)
     })
   }, [])
 
@@ -120,7 +123,7 @@ export default function PlateList() {
                   {
                     item.hasResolve && <Text className='resolve'>已解决</Text>
                   }
-                  {item.type.startsWith('『') ? item.type : `[${item.type}]`}
+                  {item.type.startsWith('『') ? item.type : ` [${item.type}] `}
                 </View>
                 }
               </View>

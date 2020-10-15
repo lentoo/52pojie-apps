@@ -24,6 +24,8 @@ export interface Article {
   diff: DiffImageContent[]
   comments: ArticleCommentItem[]
   hasNext: boolean
+  money: number | string
+  hasResolve: boolean
 }
 interface DiffImageContent {
   old: string

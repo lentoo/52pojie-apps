@@ -23,8 +23,6 @@ type ArticleDetailState = {
   comments: ArticleCommentItem[]
   loadingText: string
   openTools: boolean
-  showToTopBtn: boolean
-  animate: boolean
 }
 
 export default class ArticleDetail extends Component<ArticleDetailProp, ArticleDetailState> {
@@ -34,9 +32,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       result: undefined,
       comments: [],
       loadingText: '正在加载中',
-      openTools: false,
-      showToTopBtn: false,
-      animate: false
+      openTools: false
     }
   }
   $page = 1
@@ -44,25 +40,6 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   componentDidMount() {
     this.fetchData()
 
-    setTimeout(() => {
-      this.setState({
-        animate: true
-      })
-    }, 1000)
-  }
-  onPageScroll(e) {
-    if (!this.state.showToTopBtn && e.scrollTop > 500) {
-      this.setState({
-        showToTopBtn: true
-      })
-      return
-    }
-
-    if (this.state.showToTopBtn && e.scrollTop <= 500) {
-      this.setState({
-        showToTopBtn: false
-      })
-    }
   }
   onPullDownRefresh() {
     
@@ -119,7 +96,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       name: 'home',
       data: {
         action: 'get_article_detail_data',
-        url: link,
+        url: decodeURIComponent(link),
         page: this.$page
       }
     })
@@ -221,7 +198,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
   }
   render() {
-    const { result, comments, loadingText, openTools, showToTopBtn, animate } = this.state
+    const { result, comments, loadingText, openTools } = this.state
     if (!result) {
       return <View></View>
     }
@@ -239,6 +216,18 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           </View>
           {/* <parser-wx className='article-detail-body' html={result.content} selectable={true}/> */}
           <RichText className='article-detail-body' nodes={`<div>${result.content}</div>`}></RichText>
+
+          <View className='article-main-desc'>
+            <View>
+              {
+                result.money != -1 && <Text className='money'>悬赏 {result.money} CB吾爱币</Text>
+              }
+              {
+                result.hasResolve && <Text className='resolve'>已解决</Text>
+              }
+              
+            </View>
+          </View>
         </View>
         <View className='article-comments'>
           {
@@ -284,16 +273,6 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
         }} />
 
         <FloatButtonToTop />
-
-        {/* <FloatButton 
-          className={ classnames(animate && showToTopBtn ? 'ani-btn-to-top' : 'ani-btn-to-top-hidden')}
-          bottom={100}
-          right={-140}
-          icon={ICON_TO_TOP}
-          onClick={() => {
-            Taro.pageScrollTo({ scrollTop: 0, duration: 300 })
-          }}
-        /> */}
       </View>
     );
   }

@@ -186,6 +186,9 @@ async function getArticleDetailData(url, page = 1) {
 
   const $post_date = $main.find('.authi em')
 
+  const $money = $main.find('.rusld cite').html() || -1
+  const $hasResolve = $main.find('.rsld').length > 0
+
   let $content = $('.pcb .t_fsz')
   if ($content.length === 0) {
     $content = $('.pcb .rwdn')
@@ -244,7 +247,9 @@ async function getArticleDetailData(url, page = 1) {
     pages,
     comments,
     pan_links,
-    hasNext: Boolean(nextUrl)
+    hasNext: Boolean(nextUrl),
+    money: $money,
+    hasResolve: $hasResolve
   }
 }
 

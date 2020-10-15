@@ -15,11 +15,13 @@ import ICON_UTIL from './images/icon-util.png'
 import ICON_EGG from './images/icon-egg.png'
 import ICON_REVERSE from './images/icon-reverse.png'
 import ICON_VIRUS_ANALYSIS from './images/icon-virus-analysis.png'
+import ICON_REWARD from './images/icon-reward.png'
 
 import './index.scss'
 type PlateItem = {
   src: any
   text: string
+  url?: string
   id: string | number
 }
 type PlateState = {
@@ -34,6 +36,12 @@ export default class Index extends Component<{}, PlateState> {
           src: ICON_ORIGINAL,
           text: '原创发布区',
           id: 2,
+        },
+        {
+          src: ICON_REWARD,
+          url: 'https://www.52pojie.cn/forum.php?mod=forumdisplay&fid=8&filter=specialtype&specialtype=reward&rewardtype=1',
+          id: 0,
+          text: '悬赏专区'
         },
         {
           src: ICON_SOFTWARE,
@@ -94,9 +102,15 @@ export default class Index extends Component<{}, PlateState> {
     }
   }
   handleIconClick = (item: PlateItem) => {
-    Taro.navigateTo({
-      url: `/pages/plate/list/index?plateId=${item.id}&title=${item.text}`
-    })    
+    if (item.url) {
+      Taro.navigateTo({
+        url: `/pages/plate/list/index?reward=1&title=${item.text}&link=${encodeURIComponent(item.url)}`
+      })
+    } else {
+      Taro.navigateTo({
+        url: `/pages/plate/list/index?plateId=${item.id}&title=${item.text}`
+      })
+    }
   }
   render () {
     const { plate_list } = this.state

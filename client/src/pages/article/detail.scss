@@ -20,7 +20,7 @@
   }
   &-body {
     width: 750px;
-    font-size: 26px;
+    font-size: 28px;
     // line-height: 1.5em;
     padding: 20px;
     word-wrap: break-all;
@@ -64,7 +64,15 @@
   padding: 20px;
   background-color: #fff;
   overflow-x: auto;
-
+  &-desc {
+    font-size: 26px;
+  }
+  .money {
+    color: #F26C4F;
+  }
+  .resolve {
+    color: #67c23a;
+  }
 }
 .article-comments {
   margin-top: 20px;
@@ -102,7 +110,7 @@
       margin-top: 10px;
     }
     &-content {
-      font-size: 24px;
+      font-size: 28px;
       color: #333;
       line-height: 1.5em;
       padding-top: 15px;

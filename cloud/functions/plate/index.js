@@ -90,7 +90,8 @@ async function getPlateList(plateId, page = 1) {
       post_date,
       commentNum,
       viewNum,
-      hasNew
+      hasNew,
+      money: -1
     })
   })
   if (plateId === '66' && page === 1) {
@@ -100,7 +101,7 @@ async function getPlateList(plateId, page = 1) {
   return plate_list
 }
 
-async function getPlateListByGuide(openUrl, page = 1) {
+async function getPlateListByGuide(openUrl, page = 1, reward) {
 
   let url = decodeURIComponent(openUrl)
   url += '&page=' + page
@@ -111,50 +112,105 @@ async function getPlateListByGuide(openUrl, page = 1) {
   const plate_list = []
 
   const $tbodys = $('#threadlist .bm_c tbody')
-
-  $tbodys.each((index, tbody) => {
-    const $tbody = $(tbody)
-    // 过滤分割线
-    if (!$tbody.attr('id')) return
-
-    if ($tbody.attr('id') === 'separatorline') return
-    // 过滤置顶贴
-    if (!$tbody.attr('id').startsWith('normalthread')) return
-
-    const id = $tbody.attr('id').split('_')[1]
-    
-    const title = $tbody.find('.common a').text()
-    // #normalthread_1233028 > tr > td:nth-child(3) > cite > a
-    const type = $tbody.find('td.by').first().find('a').text().trim()
-    const link =  HOST_NAME + $tbody.find('.common a').attr('href')
-    const author = $($tbody.find('td.by').get(1)).find('cite a').text()
-    const post_date =$($tbody.find('td.by').get(1)).find('em span').text()
-    const commentNum = $tbody.find('td.num a').text()
-    const viewNum = $tbody.find('td.num em').text()
-
-    const hasRecommend = $tbody.find('.new').has('[alt=recommend]').length > 0
-    const hasHot = $tbody.find('.new').has('[alt=heatlevel]').length > 0
-    const hasNew = $tbody.find('.new').has('.xi1').length > 0
-    
-    const money = $tbody.find('.common .xw1').html() || -1
-    const hasResolve = $tbody.find('.common').text().indexOf('[已解决]') > -1
-    plate_list.push({
-      id,
-      type,
-      title,
-      link,
-      hasRecommend,
-      hasHot,
-      author,
-      post_date,
-      commentNum,
-      viewNum,
-      hasNew,
-      money,
-      hasResolve
+  if (reward !== 1) {
+    $tbodys.each((index, tbody) => {
+      const $tbody = $(tbody)
+      // 过滤分割线
+      if (!$tbody.attr('id')) return
+  
+      if ($tbody.attr('id') === 'separatorline') return
+      // 过滤置顶贴
+      if (!$tbody.attr('id').startsWith('normalthread')) return
+  
+      const id = $tbody.attr('id').split('_')[1]
+      
+      const title = $tbody.find('.common a').text()
+      // #normalthread_1233028 > tr > td:nth-child(3) > cite > a
+      const type = $tbody.find('td.by').first().find('a').text().trim()
+      const link =  HOST_NAME + $tbody.find('.common a').attr('href')
+      const author = $($tbody.find('td.by').get(1)).find('cite a').text()
+      const post_date =$($tbody.find('td.by').get(1)).find('em span').text()
+      const commentNum = $tbody.find('td.num a').text()
+      const viewNum = $tbody.find('td.num em').text()
+  
+      const hasRecommend = $tbody.find('.new').has('[alt=recommend]').length > 0
+      const hasHot = $tbody.find('.new').has('[alt=heatlevel]').length > 0
+      const hasNew = $tbody.find('.new').has('.xi1').length > 0
+      
+      const money = $tbody.find('.common .xw1').html() || -1
+      const hasResolve = $tbody.find('.common').text().indexOf('[已解决]') > -1
+      plate_list.push({
+        id,
+        type,
+        title,
+        link,
+        hasRecommend,
+        hasHot,
+        author,
+        post_date,
+        commentNum,
+        viewNum,
+        hasNew,
+        money,
+        hasResolve
+      })
     })
-  })
+  } else {
+    $tbodys.each((index, tbody) => {
+      const $tbody = $(tbody)
+      // 过滤分割线
+      if (!$tbody.attr('id')) return
+  
+      if ($tbody.attr('id') === 'separatorline') return
+      // 过滤置顶贴
+      if (!$tbody.attr('id').startsWith('normalthread')) return
+  
+      const id = $tbody.attr('id').split('_')[1]
+
+      const $title = $tbody.find('tr > th > a.s.xst')
+      const title = $title.text()
+
+      const type = '悬赏专区'
+
+      const link =  HOST_NAME + $title.attr('href')
+
+      const author = $($tbody.find('td.by').get(0)).find('cite a').text()
+
+      const post_date =$($tbody.find('td.by').get(0)).find('em span').text()
+
+      const commentNum = $tbody.find('td.num a').text()
+
+      const viewNum = $tbody.find('td.num em').text()
+  
+      const hasRecommend = $tbody.find('.new').has('[alt=recommend]').length > 0
+      const hasHot = $tbody.find('.new').has('[alt=heatlevel]').length > 0
+      const hasNew = $tbody.find('.new').has('.xi1').length > 0
+      
+      const money = $tbody.find('.new .xw1').html() || -1
+      const hasResolve = false
+      plate_list.push({
+        id,
+        type,
+        title,
+        link,
+        hasRecommend,
+        hasHot,
+        author,
+        post_date,
+        commentNum,
+        viewNum,
+        hasNew,
+        money,
+        hasResolve
+      })
+    })
+  }
   console.log(plate_list);
+
+  if (reward === 1 && page === 1) {
+    plate_list.shift()
+  }
+
   return plate_list
 }
 
@@ -165,9 +221,9 @@ exports.main = async (event, context) => {
     case 'get_plate_list_data':
       return getPlateList(data.plateId, data.page)
       break;
-      case 'get_plate_list_data_by_guide':
-        return getPlateListByGuide(data.openUrl, data.page)
-        break;
+    case 'get_plate_list_data_by_guide':
+      return getPlateListByGuide(data.openUrl, data.page, data.reward)
+      break;
     default:
       break;
   }
