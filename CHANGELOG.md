@@ -1,4 +1,4 @@
-## 1.0.1 (2020-10-10)
+## 1.0.2 (2020-10-15)
 
 
 ### Bug Fixes
@@ -17,10 +17,12 @@
 * 🎸 新增板块列表界面 ([32fea03](https://github.com/lentoo/52pojie-apps/commit/32fea03a6dcbf96ddc93127c79a4ba118dbad3b2))
 * 🎸 新增板块帖子列表获取云函数 ([5600611](https://github.com/lentoo/52pojie-apps/commit/5600611c44897b2279662ee4bb264c8fa9895ae3))
 * 🎸 新增板块页面 ([91090d0](https://github.com/lentoo/52pojie-apps/commit/91090d037c490e2d29c129ea3afa0dc358568c94))
+* 🎸 新增版本更新检查 ([8566cf1](https://github.com/lentoo/52pojie-apps/commit/8566cf1112fc3d15d1329c4b4c5682f0563febff))
 * 🎸 新增个人主页 ([a7ec001](https://github.com/lentoo/52pojie-apps/commit/a7ec0013bc1448ed69022f9f900ff9736ddfc384))
 * 🎸 新增匹配文章分享的链接 ([a7ca90e](https://github.com/lentoo/52pojie-apps/commit/a7ca90e389f1148eccee24c31bfc8a7311ed9e5c))
 * 🎸 新增首页点击更多跳转列表页 ([a2004aa](https://github.com/lentoo/52pojie-apps/commit/a2004aa8e2ec416ead90588f1f8f2b1336cf5f05))
 * 🎸 新增文章工具栏 ([763e28b](https://github.com/lentoo/52pojie-apps/commit/763e28b95c7de47865f5ab31f368880d77071f51))
+* 🎸 新增悬赏专区 ([b25eec7](https://github.com/lentoo/52pojie-apps/commit/b25eec77ca0137db7b3da995f7a5eac90b9d2e0e))
 * 🎸 新增FloatButtonToTop组件 ([4aa3288](https://github.com/lentoo/52pojie-apps/commit/4aa3288e4d1713efff2099611d225086a4b4b745))
 * 🎸 悬赏帖子显示悬赏CB数 ([aa78e62](https://github.com/lentoo/52pojie-apps/commit/aa78e62a95ca4139f53c550a7963e0240801f4f0))
 
