@@ -1,3 +1,12 @@
+## [1.0.4](https://github.com/lentoo/52pojie-apps/compare/1.0.3...1.0.4) (2020-10-19)
+
+
+### Features
+
+* 🎸 新增数据分析、登陆状态保存 ([d6aa960](https://github.com/lentoo/52pojie-apps/commit/d6aa9601ab383fb546141f6d37911fb439e1b6e1))
+
+
+
 ## [1.0.3](https://github.com/lentoo/52pojie-apps/compare/35fb946680ad56b8b9ab3d4f807cdb860266dda6...1.0.3) (2020-10-19)
 
 
