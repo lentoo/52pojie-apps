@@ -102,6 +102,9 @@ export default class Index extends Component<{}, PlateState> {
     }
   }
   handleIconClick = (item: PlateItem) => {
+    Taro.reportAnalytics('all_plate', {
+      plate_name: item.text
+    })
     if (item.url) {
       Taro.navigateTo({
         url: `/pages/plate/list/index?reward=1&title=${item.text}&link=${encodeURIComponent(item.url)}`

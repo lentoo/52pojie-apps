@@ -1,4 +1,4 @@
-## 1.0.2 (2020-10-15)
+## [1.0.3](https://github.com/lentoo/52pojie-apps/compare/35fb946680ad56b8b9ab3d4f807cdb860266dda6...1.0.3) (2020-10-19)
 
 
 ### Bug Fixes
@@ -11,6 +11,7 @@
 ### Features
 
 * 🎸 1. 提取FloatButton组件 2. 部分页面增加下拉刷新 3. 优化文章详情页显示 ([a4e4152](https://github.com/lentoo/52pojie-apps/commit/a4e41524be60a9241d614dd08048c268a2c5f45b))
+* 🎸 数据保存 ([8479ec2](https://github.com/lentoo/52pojie-apps/commit/8479ec2c619bafa80179cde3cfcc957d98e58507))
 * 🎸 帖子详情新增回到顶部按钮 ([16436b8](https://github.com/lentoo/52pojie-apps/commit/16436b8852c6afb49b35069f57a95b802427a14b))
 * 🎸 完善网盘链接复制，评论区样式优化 ([ada9dc0](https://github.com/lentoo/52pojie-apps/commit/ada9dc01f670f1f439620c485d8997ae05522dbc))
 * 🎸 文章评论列表 ([35fb946](https://github.com/lentoo/52pojie-apps/commit/35fb946680ad56b8b9ab3d4f807cdb860266dda6))

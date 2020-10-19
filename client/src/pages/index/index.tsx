@@ -26,6 +26,13 @@ export default class Index extends Component<{}, IndexComponentState> {
         Taro.stopPullDownRefresh()
       })
   }
+  onShareAppMessage() {
+    return {
+      title: '吾爱破解',
+      content: '吾爱破解论坛致力于软件安全与病毒分析的前沿，丰富的技术版块交相辉映，由无数热衷于软件加密解密及反病毒爱好者共同维护',
+      path: '/pages/index/index'
+    }
+  }
 
   getPlateListData() {
     Taro.showLoading()
@@ -55,7 +62,9 @@ export default class Index extends Component<{}, IndexComponentState> {
 
   handleMoreClick = (item: Plate) => {
     console.log('/pages/plate/list/index?link='+item.more_link + '&title=' + item.name);
-    
+    Taro.reportAnalytics('home_more', {
+      plate_name: item.name
+    })
     Taro.navigateTo({
       url: '/pages/plate/list/index?link='+ encodeURIComponent(item.more_link) + '&title=' + item.name
     })
@@ -67,7 +76,12 @@ export default class Index extends Component<{}, IndexComponentState> {
       <View className='search-box'>
         <View className='search-container'>
           <Text className='icon icon-search' />
-          <Input placeholder='请输入要搜索的内容' className='search-input' />
+          <Input placeholder='请输入要搜索的内容' className='search-input' onConfirm={() => {
+            Taro.showToast({
+              title: '功能开发中',
+              icon: 'none'
+            })
+          }} />
         </View>
       </View>
     )

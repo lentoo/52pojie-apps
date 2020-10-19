@@ -39,7 +39,14 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   hasNext = false
   componentDidMount() {
     this.fetchData()
-
+      ?.then(() => {
+        setTimeout(() => {
+          Taro.reportAnalytics('article_detail', {
+            id: this.state.result?.id,
+            article_name: this.state.result?.title
+          })
+        }, 1000);
+      })
   }
   onPullDownRefresh() {
     
@@ -53,6 +60,14 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   onReachBottom() {
     if (this.hasNext) {
       this.fetchComments()
+    }
+  }
+  onShareAppMessage() {
+    const result = this.state.result
+    return {
+      title: result?.title,
+      content: result?.content,
+      path: '/pages/article/detail?link=' + encodeURIComponent(getCurrentInstance().router?.params.link!)
     }
   }
 

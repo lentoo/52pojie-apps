@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
 
-import { checkAppUpdate } from './utils'
+import { checkAppUpdate, users_db } from './utils'
 import './app.scss'
 
 class App extends Component {
@@ -14,20 +14,25 @@ class App extends Component {
     Taro.cloud.callFunction({
       name: 'login'
     }).then(res => {
-      const { openid, appid, unionid } = res.result as any
-      const db = Taro.cloud.database()
-      const users = db.collection('users')
-      users.where({
+      const { openid, unionid } = res.result as any
+      Taro.setStorage({
+        key: '_o',
+        data: openid
+      })
+      Taro.setStorage({
+        key: '_u',
+        data: unionid
+      })
+      users_db.where({
         openid
       }).get().then(res => {
         if (res.data.length === 0) {
-          users.add({
+          users_db.add({
             data: {
               openid,
-              appid,
               unionid
             }
-          }) 
+          })
         }
       })
     })

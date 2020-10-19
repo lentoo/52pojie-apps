@@ -20,3 +20,15 @@ export function checkAppUpdate() {
     })
   })
 }
+
+if (process.env.TARO_ENV === 'weapp') {
+  Taro.cloud.init()
+}
+
+const db = Taro.cloud.database()
+
+const users_db = db.collection('users')
+
+export {
+  users_db
+}

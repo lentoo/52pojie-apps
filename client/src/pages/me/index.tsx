@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import Taro from "@tarojs/taro";
 import { View, Text, Image, Button, BaseEventOrig } from "@tarojs/components";
-import "./index.scss";
 import { ButtonProps } from "@tarojs/components/types/Button";
 import { AtButton, AtList, AtListItem } from 'taro-ui'
+
+import "./index.scss";
+import { users_db } from '../../utils'
 /** 性别的合法值 */
 interface gender {
   /** 未知 */
@@ -45,13 +47,19 @@ export default class Me extends Component<{}, MeState> {
   }
 
   doLogin() {
-    Taro.cloud
-      .callFunction({
-        name: "login"
-      })
-      .then(res => {
-        console.log("doLogin", res);
-      });
+    const openid = Taro.getStorageSync('_o')
+    if (openid) {
+      users_db.where({
+        openid
+      }).get()
+        .then(result => {
+          if (result.data.length) {
+            this.setState({
+              userinfo: result.data[0] as any
+            })
+          } 
+        })
+    }
   }
 
   onGetUserInfo = (
@@ -63,6 +71,18 @@ export default class Me extends Component<{}, MeState> {
         userinfo: event.detail.userInfo
       });
       Taro.setStorageSync("userinfo", event.detail.userInfo);
+      const openid = Taro.getStorageSync('_o')
+      users_db.where({
+        openid
+      }).get()
+        .then(res => {
+          if (res.data.length) {
+            users_db.doc(res.data[0]._id!)
+              .update({
+                data: event.detail.userInfo
+              })
+          }
+        })
     } else {
       Taro.showToast({
         icon: "none",
@@ -96,8 +116,8 @@ export default class Me extends Component<{}, MeState> {
         
         <View className='action-list'>
           <AtList>
-            {/* <AtListItem title='访问记录' arrow='right' />
-            <AtListItem title='我的收藏' arrow='right' /> */}
+            <AtListItem title='访问记录' arrow='right' />
+            <AtListItem title='我的收藏' arrow='right' />
             <Button openType='contact'><AtListItem title='联系客服' arrow='right' /></Button>
             <Button openType='feedback'><AtListItem title='问题反馈' arrow='right' /></Button>
             
