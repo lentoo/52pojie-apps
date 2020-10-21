@@ -31,14 +31,25 @@ type MeState = {
     /** 国家，如：`China` */
     country: string;
   } | null;
+  tools: ToolItem[]
 };
+type ToolItem = {
+  image: string
+  value: string
+  url: string
+}
 
 export default class Me extends Component<{}, MeState> {
   constructor(props) {
     super(props);
     const userinfo = Taro.getStorageSync("userinfo");
     this.state = {
-      userinfo: userinfo || null
+      userinfo: userinfo || null,
+      tools: [{
+        image: 'cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/小鸡仔.png',
+        value: '蚂蚁庄园答案',
+        url: '/pages/ant/ant-manor/index'
+      }]
     };
   }
 
@@ -92,7 +103,7 @@ export default class Me extends Component<{}, MeState> {
   };
 
   render() {
-    const { userinfo } = this.state;
+    const { userinfo, tools } = this.state;
     return (
       <View className="me">
         <View className="avatar-box">
@@ -121,6 +132,25 @@ export default class Me extends Component<{}, MeState> {
             <Button openType='contact'><AtListItem title='联系客服' arrow='right' /></Button>
             <Button openType='feedback'><AtListItem title='问题反馈' arrow='right' /></Button>
             
+          </AtList>
+        </View>
+
+        <View className='action-list'>
+          <AtList>
+            {
+              tools.map(tool => {
+                return (
+                  <AtListItem onClick={() => {
+                    Taro.reportAnalytics('more_tools', {
+                      tool_name: tool.value
+                    })
+                    Taro.navigateTo({
+                      url: tool.url
+                    })
+                  }} title={tool.value} arrow='right' thumb={tool.image} />
+                )
+              })
+            }
           </AtList>
         </View>
       </View>

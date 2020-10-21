@@ -1,0 +1,16 @@
+@import "~taro-ui/dist/style/components/card.scss";
+
+
+.at-card {
+  /* border-top: 1PX #d6e4ef solid; */
+  /* border-bottom: 1PX #d6e4ef solid; */
+  /* border-right: 1PX #d6e4ef solid; */
+  /* border-left: 1PX #d6e4ef solid; */
+  
+  margin-top: 40px;
+  box-shadow: 0px 0px 20px #ebebeb;
+  border: 0;
+  .at-card__header {
+    border-bottom: 1PX #f5f5f5 solid;
+  }
+}

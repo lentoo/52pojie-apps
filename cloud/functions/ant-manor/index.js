@@ -16,7 +16,8 @@ async function getAntManorAnswer() {
   const antManorAnswer = []
   trs.each((index, tr) => {
     const tds = $(tr).find('td')
-    if (tds.length === 3) {
+    const now = new Date()
+    if ($(tds[0]).text().trim() === `${now.getMonth() + 1}月${now.getDate()}日`) {
       antManorAnswer.push({
         id: index,
         date: $(tds[0]).text(),

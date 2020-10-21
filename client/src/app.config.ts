@@ -5,7 +5,8 @@ export default {
     'pages/demo/index',
     'pages/article/detail',
     'pages/plate/list/index',
-    'pages/me/index'
+    'pages/me/index',
+    'pages/ant/ant-manor/index'
   ],
   window: {
     backgroundTextStyle: 'light',
