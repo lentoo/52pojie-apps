@@ -131,6 +131,9 @@ export default class Me extends Component<{}, MeState> {
               Taro.navigateTo({
                 url: '/pages/me/record/index'
               })
+              Taro.reportAnalytics('more_tools', {
+                tool_name: '访问记录'
+              })
             }}/>
             <AtListItem title='我的收藏' arrow='right' onClick={() => {
               Taro.showToast({
