@@ -127,8 +127,17 @@ export default class Me extends Component<{}, MeState> {
         
         <View className='action-list'>
           <AtList>
-            <AtListItem title='访问记录' arrow='right' />
-            <AtListItem title='我的收藏' arrow='right' />
+            <AtListItem title='访问记录' arrow='right' onClick={() => {
+              Taro.navigateTo({
+                url: '/pages/me/record/index'
+              })
+            }}/>
+            <AtListItem title='我的收藏' arrow='right' onClick={() => {
+              Taro.showToast({
+                icon: 'none',
+                title: '功能开发中'
+              })
+            }} />
             <Button openType='contact'><AtListItem title='联系客服' arrow='right' /></Button>
             <Button openType='feedback'><AtListItem title='问题反馈' arrow='right' /></Button>
             
@@ -140,7 +149,7 @@ export default class Me extends Component<{}, MeState> {
             {
               tools.map(tool => {
                 return (
-                  <AtListItem onClick={() => {
+                  <AtListItem key={tool.value} onClick={() => {
                     Taro.reportAnalytics('more_tools', {
                       tool_name: tool.value
                     })

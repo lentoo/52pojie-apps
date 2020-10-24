@@ -4,37 +4,24 @@ import Taro, { useRouter, useReachBottom, usePullDownRefresh } from '@tarojs/tar
 
 import LoadingMore from '../../../components/LoadingMore'
 import FloatButtonToTop from '../../../components/FloatButtonToTop'
-
-import ICON_VIEWS from '../images/icon-views.png'
-import ICON_COMMENT from '../images/icon-comment.png'
+import PlateItem, { IPlateItem } from '../../../components/PlateItem'
+// import ICON_VIEWS from '../images/icon-views.png'
+// import ICON_COMMENT from '../images/icon-comment.png'
 import ICON_NEW from '../images/icon-new.png'
 import './index.scss'
+import { records_db } from '../../../utils';
 
 
 enum PlateActions {
   GET_PLATE_LIST_DATA = 'get_plate_list_data',
   GET_PLATE_LIST_DATA_BY_GUIDE = 'get_plate_list_data_by_guide'
 }
-interface PlateItem {
-  id: string
-  type: string
-  title: string
-  link: string
-  author: string
-  post_date: string
-  commentNum: string
-  viewNum: string
-  hasHot: boolean
-  hasNew: boolean
-  hasRecommend: boolean
-  money: string | number,
-  hasResolve: boolean
-}
+
 export default function PlateList() {
   
   const { title, plateId, link, reward } = useRouter().params
 
-  const [ plate_list, setPlateList ] = useState<PlateItem[]>([])
+  const [ plate_list, setPlateList ] = useState<IPlateItem[]>([])
   useEffect(() => {
     Taro.setNavigationBarTitle({ title: title || '' })
   }, [title])
@@ -58,9 +45,9 @@ export default function PlateList() {
       }
     }).then(res => {
       if (page === 1) {
-        setPlateList(res.result as PlateItem[])
+        setPlateList(res.result as IPlateItem[])
       } else {
-        setPlateList([...plate_list, ...res.result as PlateItem[]])
+        setPlateList([...plate_list, ...res.result as IPlateItem[]])
       }
     })
   }
@@ -95,10 +82,39 @@ export default function PlateList() {
     })
   })
 
-  const handleItemClick = useCallback((item: PlateItem) => {
+  const handleItemClick = useCallback((item: IPlateItem) => {
     Taro.navigateTo({
       url: '/pages/article/detail?link=' + encodeURIComponent(item.link)
     })
+    const _o = Taro.getStorageSync('_o')
+    records_db.where({
+      _o,
+      title: item.title
+    }).get().then(result => {
+      if (result.data.length) {
+        records_db.doc(result.data[0]._id!)
+          .remove({
+            
+          }).then(() => {
+            records_db.add({
+              data: {
+                _o,
+                date: Date.now(),
+                ...item
+              }
+            })
+          })
+      } else {
+        records_db.add({
+          data: {
+            _o,
+            date: Date.now(),
+            ...item
+          }
+        })
+      }
+    })
+    
   }, [])
 
   
@@ -107,48 +123,7 @@ export default function PlateList() {
       <View className='plate-list'>
         {
           plate_list.map(item => {
-            return <View key={'index' + item.id} className='plate-item' onClick={() => handleItemClick(item)}>
-              <View className='plate-top'>
-                <View className='plate-item-username'>
-                  {item.author}
-                </View>
-                { item.type && 
-                <View className='plate-item-type'>
-                  {
-                    item.money !== -1 
-                      && <Text className='money'>
-                        悬赏 {item.money} CB吾爱币
-                      </Text>
-                  }
-                  {
-                    item.hasResolve && <Text className='resolve'>已解决</Text>
-                  }
-                  {item.type.startsWith('『') ? item.type : ` [${item.type}] `}
-                </View>
-                }
-              </View>
-              
-              <View className='plate-item-title'>
-                <Text>{item.title}</Text>
-
-                {
-                  // item.hasNew && <Image className='icon-new' src={ICON_NEW} />
-                }
-                
-              </View>
-              
-              <View className='plate-bottom'>
-                <View className='plate-item-date'>{item.post_date}</View>
-                <View className='plate-item-commend'>
-                  <Image className='plate-item-icon plate-item-icon-comment' src={ICON_COMMENT} />
-                  <Text>{item.commentNum}</Text>
-                </View>
-                <View className='plate-item-views'>
-                  <Image className='plate-item-icon' src={ICON_VIEWS} />
-                  <Text>{item.viewNum}</Text>
-                </View>
-              </View>
-            </View>
+            return <PlateItem key={'index' + item.id} item={item} handleItemClick={handleItemClick} />
           })
         }
         <LoadingMore loadingText={'正在加载中'} />

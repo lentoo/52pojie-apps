@@ -6,7 +6,8 @@ export default {
     'pages/article/detail',
     'pages/plate/list/index',
     'pages/me/index',
-    'pages/ant/ant-manor/index'
+    'pages/ant/ant-manor/index',
+    'pages/me/record/index'
   ],
   window: {
     backgroundTextStyle: 'light',

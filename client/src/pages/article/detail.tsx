@@ -67,7 +67,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     return {
       title: result?.title,
       content: result?.content,
-      path: '/pages/article/detail?link=' + encodeURIComponent(getCurrentInstance().router?.params.link!)
+      path: '/pages/article/detail?link=' + getCurrentInstance().router?.params.link!
     }
   }
 
