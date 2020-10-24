@@ -1,3 +1,26 @@
+## [1.0.7](https://github.com/lentoo/52pojie-apps/compare/1.0.6...1.0.7) (2020-10-24)
+
+
+### Performance Improvements
+
+* ⚡️ 访问记录埋点 ([1b9c10d](https://github.com/lentoo/52pojie-apps/commit/1b9c10deb4eebb98c1bebc605fab5a15f0c0c8a0))
+
+
+
+## [1.0.6](https://github.com/lentoo/52pojie-apps/compare/1.0.5...1.0.6) (2020-10-24)
+
+
+### Bug Fixes
+
+* 🐛 循环列表加上key ([3fcad1f](https://github.com/lentoo/52pojie-apps/commit/3fcad1fec33df6ca9ac9b130389052bb58de5fa1))
+
+
+### Features
+
+* 🎸 新增访问记录保存 ([3d2023f](https://github.com/lentoo/52pojie-apps/commit/3d2023f100db8b85111975e84c9337caaebf31ac))
+
+
+
 ## [1.0.5](https://github.com/lentoo/52pojie-apps/compare/1.0.4...1.0.5) (2020-10-21)
 
 
