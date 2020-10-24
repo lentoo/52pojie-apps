@@ -51,6 +51,7 @@ export default class AntManor extends Component<{}, AntManorState> {
               <AtCard
                 note={answer.date}
                 title={answer.title}
+                key={answer.id}
               >
                 {answer.answer}
               </AtCard>
