@@ -1,0 +1,12 @@
+@import "~taro-ui/dist/style/components/swipe-action.scss";
+.record-list {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  .com-item {
+    margin-bottom: 0;
+  }
+  .at-swipe-action {
+    margin-bottom: 20px;
+  }
+}
+
