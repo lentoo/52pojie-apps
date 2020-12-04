@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Input } from '@tarojs/components'
 import './index.scss'
-
+import { callCloudFunction } from '../../utils'
 
 import { Plate, PlateItem} from '../../types'
 
@@ -36,8 +36,7 @@ export default class Index extends Component<{}, IndexComponentState> {
 
   getPlateListData() {
     Taro.showLoading()
-    return Taro.cloud
-      .callFunction({
+    return callCloudFunction({
         name: 'home',
         data: {
           action: 'get_home_page_data'

@@ -29,6 +29,23 @@ const db = Taro.cloud.database()
 
 const users_db = db.collection('users')
 
+export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'name' | 'data' | 'slow' | 'config'>) {
+  let retryCount = 0
+  function callFunction() {
+    return Taro.cloud.callFunction(param)
+      .catch(error => {
+        console.log(error);
+        retryCount++
+        if (retryCount <= 10) {
+          return callFunction()
+        } else {
+          Promise.reject(error)
+        }
+      })    
+  }
+  return callFunction()
+}
+
 export {
   users_db
 }

@@ -10,6 +10,7 @@ import FloatButton from '../../components/FloatButton'
 import FloatButtonToTop from '../../components/FloatButtonToTop'
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
+import { callCloudFunction } from '../../utils'
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
 // import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
@@ -74,7 +75,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   fetchComments() {
     const { result } = this.state
     if (!result) return
-    Taro.cloud.callFunction({
+    callCloudFunction({
       name: 'home',
       data: {
         action: 'get_article_detail_comments_data',
@@ -107,7 +108,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     })
     Taro.showNavigationBarLoading()
 
-    return Taro.cloud.callFunction({
+    return callCloudFunction({
       name: 'home',
       data: {
         action: 'get_article_detail_data',
