@@ -22,6 +22,7 @@ $btn-float-size: 90px;
   }
   &:active {
     background-color: rgba($color: #999, $alpha: .8);
+    box-shadow: 0 0 0px 10px rgba($color: #000, $alpha: .1);
   }
   .icon {
     width: 36px;

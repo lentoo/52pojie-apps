@@ -18,11 +18,11 @@ if (process.env.TARO_ENV === 'weapp') {
   Taro.cloud.init()
 }
 
-const db = Taro.cloud.database()
 
-const users_db = db.collection('users')
 
-export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'name' | 'data' | 'slow' | 'config'>) {
+
+
+export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'name' | 'data' | 'slow' | 'config'>) : Promise<Taro.cloud.CallFunctionResult> {
   let retryCount = 0
   function callFunction() {
     return Taro.cloud.callFunction(param)
@@ -39,8 +39,19 @@ export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'nam
   return callFunction()
 }
 
+const db = Taro.cloud.database()
+const users_db = db.collection('users')
+let user_fund_db: Taro.DB.Collection
 const records_db = db.collection('records')
+function getUserFundDb () {
+  if (!user_fund_db) {
+    user_fund_db = db.collection('user_funds')
+  }
+  return user_fund_db
+}
 export {
+  db,
   users_db,
-  records_db
+  records_db,
+  getUserFundDb
 }

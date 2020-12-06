@@ -77,6 +77,12 @@
           "pathName": "pages/plate/list/index",
           "query": "link=https%3A%2F%2Fwww.52pojie.cn%2Fforum.php%3Fmod%3Dguide%26view%3Dnewthread&title=新鲜出炉",
           "scene": null
+        },
+        {
+          "id": -1,
+          "name": "pages/fund/index",
+          "pathName": "pages/fund/index",
+          "scene": null
         }
       ]
     }

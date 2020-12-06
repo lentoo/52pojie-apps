@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import Taro from "@tarojs/taro";
-import { View, Text, Image, Button, BaseEventOrig } from "@tarojs/components";
+import { View, Text, Image, Button, BaseEventOrig, Form } from "@tarojs/components";
 import { ButtonProps } from "@tarojs/components/types/Button";
 import { AtButton, AtList, AtListItem } from 'taro-ui'
 
 import "./index.scss";
-import { users_db } from '../../utils'
+import { users_db, callCloudFunction } from '../../utils'
 /** 性别的合法值 */
 interface gender {
   /** 未知 */
@@ -38,6 +38,10 @@ type ToolItem = {
   value: string
   url: string
 }
+/**
+ * 基金模板id
+ */
+const FOUND_TEMPLATE_ID = 'GUMP-Xoi6B1J38VU1ldRWa4NNcb5T-DiOHrm7Fl7iaE'
 
 export default class Me extends Component<{}, MeState> {
   constructor(props) {
@@ -49,12 +53,22 @@ export default class Me extends Component<{}, MeState> {
         image: 'cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/小鸡仔.png',
         value: '蚂蚁庄园答案',
         url: '/pages/ant/ant-manor/index'
+      }, {
+        image: 'cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/fund.png',
+        value: '自选基金助手',
+        url: '/pages/fund/index'
       }]
     };
   }
 
   componentDidMount() {
     this.doLogin();
+    wx.getSetting({
+      withSubscriptions: true,
+      success: function(res) {
+        console.log(res.subscriptionsSetting)
+      }
+    })
   }
 
   doLogin() {
@@ -165,7 +179,26 @@ export default class Me extends Component<{}, MeState> {
             }
           </AtList>
         </View>
+          <Form onSubmit={this.subscribeMessage} reportSubmit>
+            <Button formType='submit'>基金消息更新推送</Button>
+          </Form>
+        <AtButton type="primary" onClick={this.pushMessage}>推送消息</AtButton>
       </View>
     );
+  }
+
+  subscribeMessage = (e) => {
+    Taro.requestSubscribeMessage({
+      tmplIds: [FOUND_TEMPLATE_ID]
+    }).then(res => {
+      console.log(e)
+      
+      console.log('订阅成功', res)
+    })
+  }
+  pushMessage = () => {
+    callCloudFunction({
+      name: 'demo'
+    })
   }
 }
