@@ -78,7 +78,7 @@ export default class Fund extends Component<{}, FundState> {
   }
   componentDidMount() {
     this.getUserFundCodes()
-    this.timer = setInterval(this.whileGetFundData, 3000)
+    this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
   }
   componentWillUnmount() {
     if (this.timer) {
@@ -86,21 +86,32 @@ export default class Fund extends Component<{}, FundState> {
       this.timer = null
     }
   }
+  onPullDownRefresh () {
+    this.getFundData()
+      ?.then(() => {
+        Taro.stopPullDownRefresh()
+      })
+  }
   whileGetFundData() {
-    const date = new Date()    
-    if (date.getHours() >= 15) {
+    const date = new Date()
+    console.log(date.getHours());
+    const hourse = date.getHours()
+    const minutes = date.getMinutes()
+    if (hourse === 11 && minutes >= 31 || hourse === 12) {
+      return
+    }
+    if (hourse >= 15 && minutes > 2) {
       if (this.timer) {
         clearInterval(this.timer)
       }
+    } else {
+      this.getFundData()
     }
   }
   onSearchValueChange = (value) => {
     this.setState({
       searchValue: value
     })
-  }
-  onActionClick = () => {
-    this.searchFund()
   }
   getUserFundCodes = () => {
     this.user_fund_db.where({
@@ -186,11 +197,13 @@ export default class Fund extends Component<{}, FundState> {
   getFundData = () => {
     if (!this.state.user_fund) { return }
     const fund_ids = this.state.user_fund.codes.join(',')
-    Taro.request({
+    Taro.showNavigationBarLoading()
+    return Taro.request({
       url: `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=ssdfsdfsd&Fcodes=${fund_ids}`,
       method: 'GET',
     }).then(rawData => {
       console.log(rawData)
+      Taro.hideNavigationBarLoading()
       if (rawData.statusCode === 200) {
         this.setState({
           fund_datas: rawData.data.Datas.map((item, index) => {
@@ -211,7 +224,6 @@ export default class Fund extends Component<{}, FundState> {
           this.setState({
             fab_icon: this.state.fab_icon === fab_icon_enum.ICON_EDIT ? fab_icon_enum.ICON_SAVE : fab_icon_enum.ICON_EDIT
           })
-          this.getFundData()
         })
     } else {
       // edit
@@ -238,6 +250,7 @@ export default class Fund extends Component<{}, FundState> {
           }
         })
         .then(() => {
+          this.getFundData()
           Taro.hideLoading()
         })
         .catch((reason) => {
@@ -267,9 +280,13 @@ export default class Fund extends Component<{}, FundState> {
   }
   render() {
     const { searchValue, fund_datas, fab_icon } = this.state
+    const summary = fund_datas.reduce((prev, curr) => {
+      const income =  curr.portion * Number(curr.GSZ) * (Number(curr.GSZZL) / 100)
+      return prev + income
+    }, 0)
     return (
       <View className='fund'>
-        <AtSearchBar placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.onActionClick}/>
+        <AtSearchBar placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
         <FloatButton bottom={100} right={40} icon={fab_icon} onClick={this.handleFloatButtonClick} />
         <View className='table'>
           <View className='table-headers'>
@@ -286,8 +303,6 @@ export default class Fund extends Component<{}, FundState> {
             {
               fund_datas.map(item => {
                 const income =  item.portion * Number(item.GSZ) * (Number(item.GSZZL) / 100)
-                console.log(income);
-                
                 const isProfit = income > 0
                 const isProfitLoss = income < 0
                 return (
@@ -326,7 +341,10 @@ export default class Fund extends Component<{}, FundState> {
 
         </View>
         <View className='summary'>
-          <Text>当日估算收益：0.00</Text>
+          <Text className={classnames({
+            green: summary < 0,
+            red: summary > 0
+          })}>当日估算收益：{summary.toFixed(2)}</Text>
         </View>
       </View>
     );
