@@ -278,6 +278,33 @@ export default class Fund extends Component<{}, FundState> {
       })
     })
   }
+  handleLongPress = (item: IFundData) => {
+    console.log('handleLongPress', item, this.state.user_fund);
+    Taro.showActionSheet({
+      itemList: [
+        '删除'
+      ]
+    }).then(result => {
+      console.log(result.tapIndex);
+      switch(result.tapIndex) {
+        case 0: 
+          this.removeFund(item.FCODE)
+      }
+    })
+  }
+  removeFund(code: string) {
+    if (!this.state.user_fund) return
+    this.user_fund_db
+      .doc(this.state.user_fund._id)
+      .update({
+        data: {
+          codes: this.state.user_fund.codes.filter(c => c !== code),
+          funds: this.state.user_fund.funds.filter(c => c.FCODE !== code)
+        }
+      }).then(() => {
+        this.getUserFundCodes()
+      })
+  }
   render() {
     const { searchValue, fund_datas, fab_icon } = this.state
     const summary = fund_datas.reduce((prev, curr) => {
@@ -297,7 +324,6 @@ export default class Fund extends Component<{}, FundState> {
             {
               fab_icon === fab_icon_enum.ICON_SAVE && <View className='table-header'>持有份额</View>
             }
-            
           </View>
           <View className='table-body'>
             {
@@ -306,7 +332,9 @@ export default class Fund extends Component<{}, FundState> {
                 const isProfit = income > 0
                 const isProfitLoss = income < 0
                 return (
-                  <View className='table-column' key={item.FCODE}>
+                  <View className='table-column' key={item.FCODE}
+                    onLongPress={() => this.handleLongPress(item)}
+                  >
                     {/* 基金名称 */}
                     <View className='table-item'>
                       {item.SHORTNAME}
