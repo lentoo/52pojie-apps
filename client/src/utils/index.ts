@@ -14,13 +14,16 @@ export function checkAppUpdate() {
   })
 }
 
+export function padZero(num: string | number): string {
+  if (Number(num) < 10) {
+    return '0' + num
+  }
+  return num.toString()
+}
+
 if (process.env.TARO_ENV === 'weapp') {
   Taro.cloud.init()
 }
-
-
-
-
 
 export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'name' | 'data' | 'slow' | 'config'>) : Promise<Taro.cloud.CallFunctionResult> {
   let retryCount = 0
@@ -41,17 +44,24 @@ export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'nam
 
 const db = Taro.cloud.database()
 const users_db = db.collection('users')
-let user_fund_db: Taro.DB.Collection
 const records_db = db.collection('records')
-function getUserFundDb () {
-  if (!user_fund_db) {
-    user_fund_db = db.collection('user_funds')
+
+function createTypeDbFactory(type: string) {
+  let target: Taro.DB.Collection
+  return function(): Taro.DB.Collection {
+    if (!target) {
+      target = db.collection(type)
+    }
+    return target
   }
-  return user_fund_db
 }
+
+const getUserFundDb = createTypeDbFactory('user_funds')
+const getUserFundSubscribeDb = createTypeDbFactory('user_fund_subscribe')
 export {
   db,
   users_db,
   records_db,
-  getUserFundDb
+  getUserFundDb,
+  getUserFundSubscribeDb
 }

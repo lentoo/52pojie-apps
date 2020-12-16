@@ -7,8 +7,7 @@ export default {
     'pages/plate/list/index',
     'pages/me/index',
     'pages/ant/ant-manor/index',
-    'pages/me/record/index',
-    'pages/fund/index'
+    'pages/me/record/index'
   ],
   window: {
     backgroundTextStyle: 'light',
@@ -39,5 +38,15 @@ export default {
       iconPath: 'assets/images/commons/me-unselect.png',
       selectedIconPath: 'assets/images/commons/me-selected.png'
     }]
-  }
+  },
+  subpackages: [
+    {
+      root: "sub-package",
+      
+      pages: [
+        'fund/index',
+        'fund/fund-detail/index'
+      ]
+    }
+  ]
 }

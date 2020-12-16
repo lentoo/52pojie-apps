@@ -38,10 +38,6 @@ type ToolItem = {
   value: string
   url: string
 }
-/**
- * 基金模板id
- */
-const FOUND_TEMPLATE_ID = 'GUMP-Xoi6B1J38VU1ldRWa4NNcb5T-DiOHrm7Fl7iaE'
 
 export default class Me extends Component<{}, MeState> {
   constructor(props) {
@@ -56,7 +52,7 @@ export default class Me extends Component<{}, MeState> {
       }, {
         image: 'cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/fund.png',
         value: '自选基金助手',
-        url: '/pages/fund/index'
+        url: '/sub-package/fund/index'
       }]
     };
   }
@@ -179,26 +175,7 @@ export default class Me extends Component<{}, MeState> {
             }
           </AtList>
         </View>
-          <Form onSubmit={this.subscribeMessage} reportSubmit>
-            <Button formType='submit'>基金消息更新推送</Button>
-          </Form>
-        <AtButton type="primary" onClick={this.pushMessage}>推送消息</AtButton>
       </View>
     );
-  }
-
-  subscribeMessage = (e) => {
-    Taro.requestSubscribeMessage({
-      tmplIds: [FOUND_TEMPLATE_ID]
-    }).then(res => {
-      console.log(e)
-      
-      console.log('订阅成功', res)
-    })
-  }
-  pushMessage = () => {
-    callCloudFunction({
-      name: 'demo'
-    })
   }
 }

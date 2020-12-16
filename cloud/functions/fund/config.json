@@ -1,5 +1,14 @@
 {
   "permissions": {
-    "openapi": []
-  }
+    "openapi": [
+      "subscribeMessage.send"
+    ]
+  },
+   "triggers": [
+    {
+      "name": "fundValuationUpdateTrigger",
+      "type": "timer",
+      "config": "3 0 15 * * MON-FRI *"
+    }
+  ]
 }

@@ -5,7 +5,7 @@
   "description": "吾爱破解小程序",
   "appid": "wx093e059efc0f237a",
   "setting": {
-    "urlCheck": false,
+    "urlCheck": true,
     "es6": false,
     "enhance": false,
     "postcss": false,
@@ -32,8 +32,11 @@
     "useIsolateContext": true,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
+    "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "bundle": false
   },
   "compileType": "miniprogram",
   "simulatorType": "wechat",
@@ -72,16 +75,17 @@
           "scene": null
         },
         {
-          "id": -1,
-          "name": "pages/plate/list/index",
-          "pathName": "pages/plate/list/index",
-          "query": "link=https%3A%2F%2Fwww.52pojie.cn%2Fforum.php%3Fmod%3Dguide%26view%3Dnewthread&title=新鲜出炉",
+          "id": 2,
+          "name": "sub-package/fund/fund-detail/index",
+          "pathName": "sub-package/fund/fund-detail/index",
+          "query": "code=290011",
           "scene": null
         },
         {
-          "id": -1,
-          "name": "pages/fund/index",
-          "pathName": "pages/fund/index",
+          "id": 3,
+          "name": "sub-package/fund/index",
+          "pathName": "sub-package/fund/index",
+          "query": "",
           "scene": null
         }
       ]
