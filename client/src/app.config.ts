@@ -2,7 +2,7 @@ export default {
   pages: [
     'pages/index/index',
     'pages/plate/index',
-    'pages/demo/index',
+    // 'pages/demo/index',
     'pages/article/detail',
     'pages/plate/list/index',
     'pages/me/index',

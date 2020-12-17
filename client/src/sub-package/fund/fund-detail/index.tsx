@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useRef } from 'react'
 import Taro, { useRouter } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { EChart } from 'echarts-taro3-react'
+// import { EChart } from 'echarts-taro3-react'
 // export default function FundDetail() {
 //   const router = useRouter()
 //   useEffect(() => {
@@ -78,7 +78,7 @@ export default class FundDetail extends React.Component {
     return (
       <View>
         <View>123</View>
-        <EChart ref={this.refBarChart} canvasId='bar-canvas'></EChart>
+        {/* <EChart ref={this.refBarChart} canvasId='bar-canvas'></EChart> */}
       </View>
     )
   }

@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 import { View, Input, Text } from "@tarojs/components"
 import React, { Component } from "react";
-import { AtSearchBar } from 'taro-ui'
+import { AtSearchBar, AtActionSheet, AtActionSheetItem } from 'taro-ui'
 import classnames from 'classnames'
 
 import FloatButton from '../../components/FloatButton'
@@ -68,14 +68,16 @@ interface FundState {
   fund_datas: IFundData[]
   fab_icon: fab_icon_enum
   displaySubscribe: boolean
+
+  actionsheet_title: string
+  show_actionsheet: boolean
 }
 
 export default class Fund extends Component<{}, FundState> {
   user_fund_db = getUserFundDb()
   openid = Taro.getStorageSync('_o')
   timer: NodeJS.Timer | null
-  today: Date
-  today_str: string
+  actionsheet_select_code: string
   constructor(props) {
     super(props)
     this.state = {
@@ -84,7 +86,9 @@ export default class Fund extends Component<{}, FundState> {
       user_fund: null,
       fund_datas: [],
       fab_icon: fab_icon_enum.ICON_EDIT,
-      displaySubscribe: false
+      displaySubscribe: false,
+      actionsheet_title: '',
+      show_actionsheet: false
     }
   }
   componentDidMount() {
@@ -332,6 +336,34 @@ export default class Fund extends Component<{}, FundState> {
       })
     })
   }
+  handleLongPress = (item: IFundData) => {
+    console.log('handleLongPress', item, this.state.user_fund);
+    this.actionsheet_select_code = item.FCODE
+    this.setState({
+      show_actionsheet: true,
+      actionsheet_title: item.SHORTNAME + `(${item.FCODE})`
+    })
+  }
+  removeFund(code: string) {
+    if (!this.state.user_fund) return
+    this.user_fund_db
+      .doc(this.state.user_fund._id)
+      .update({
+        data: {
+          codes: this.state.user_fund.codes.filter(c => c !== code),
+          funds: this.state.user_fund.funds.filter(c => c.FCODE !== code)
+        }
+      }).then(() => {
+        this.getUserFundCodes()
+        this.handleActionSheetClose()
+      })
+  }
+  handleActionSheetClose = () => {
+    this.setState({
+      show_actionsheet: false,
+      actionsheet_title: ''
+    })
+  }
   handleSubscribe = () => {
     Taro.requestSubscribeMessage({
       tmplIds: [FOUND_TEMPLATE_ID]
@@ -351,7 +383,7 @@ export default class Fund extends Component<{}, FundState> {
               data: {
                 openid: this.openid
               }
-            }).finally(() => {
+            }).then(() => {
               Taro.showToast({
                 title: '订阅成功',
                 icon: 'success'
@@ -364,11 +396,10 @@ export default class Fund extends Component<{}, FundState> {
     })
   }
   render() {
-    const { searchValue, fund_datas, fab_icon, displaySubscribe } = this.state
+    const { searchValue, fund_datas, fab_icon, displaySubscribe, actionsheet_title, show_actionsheet} = this.state
     const summary = fund_datas.reduce((prev, curr) => {
       const updated = curr.PDATE === curr.GZTIME.split(' ')[0]
       const useGSZZL = updated ? curr.NAVCHGRT : curr.GSZZL
-      const useGSZ = updated ? curr.NAV : curr.GSZ
       const income =  curr.portion * Number(curr.GSZ) * (Number(useGSZZL) / 100)
       return prev + income
     }, 0)
@@ -377,7 +408,7 @@ export default class Fund extends Component<{}, FundState> {
 
         <Subscribe hidden={displaySubscribe} onSubscribe={this.handleSubscribe} />
 
-        <AtSearchBar placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
+        <AtSearchBar showActionButton placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
         <FloatButton bottom={100} right={40} icon={fab_icon} onClick={this.handleFloatButtonClick} />
         <FloatButton className={
           classnames('cancel-btn', {
@@ -385,6 +416,11 @@ export default class Fund extends Component<{}, FundState> {
             'hide-cancel': fab_icon === fab_icon_enum.ICON_EDIT
           })
         } bottom={100} right={-160} icon={ICON_CANCEL} onClick={this.handleCancelClick} />
+        <AtActionSheet isOpened={show_actionsheet} cancelText='取消' title={actionsheet_title} onCancel={this.handleActionSheetClose} onClose={this.handleActionSheetClose}>
+          <AtActionSheetItem onClick={ () => this.removeFund(this.actionsheet_select_code) }>
+            删除
+          </AtActionSheetItem>
+        </AtActionSheet>
         <View className='table'>
           <View className='table-headers'>
             <View className='table-header'>基金名称</View>
@@ -404,7 +440,9 @@ export default class Fund extends Component<{}, FundState> {
                 const useGSZ = updated ? item.NAV : item.GSZ
                 const income =  item.portion * Number(item.GSZ) * (Number(useGSZZL) / 100)
                 return (
-                  <View className='table-column' key={item.FCODE}>
+                  <View className='table-column' key={item.FCODE}
+                    onLongPress={() => this.handleLongPress(item)}
+                  >
                     {/* 基金名称 */}
                     <View className='table-item' onClick={() => {
                       Taro.navigateTo({
@@ -416,6 +454,12 @@ export default class Fund extends Component<{}, FundState> {
                         {item.FCODE}
                       </View>
                     </View>
+                    {/* 持有份额 */}
+                    {
+                      fab_icon === fab_icon_enum.ICON_SAVE && (<View className='table-item'>
+                        <Input data-code={item.FCODE} value={item.portion.toString()} name='portion' type='text' onInput={this.handlePortionChange}/>
+                      </View>)
+                    }
                     {/* 估算净值 */}
                     <View className='table-item'>
                       {useGSZ}
@@ -433,12 +477,7 @@ export default class Fund extends Component<{}, FundState> {
                       green: income < 0
                     })}
                     >{income.toFixed(2)}</View>
-                    {/* 持有份额 */}
-                    {
-                      fab_icon === fab_icon_enum.ICON_SAVE && (<View className='table-item'>
-                        <Input data-code={item.FCODE} value={item.portion.toString()} name='portion' type='text' onInput={this.handlePortionChange}/>
-                      </View>)
-                    }
+                    
                   </View>
                 )
               })
@@ -452,6 +491,7 @@ export default class Fund extends Component<{}, FundState> {
             red: summary > 0
           })}>当日估算收益：{summary.toFixed(2)}</Text>
         </View>
+        <View className='summary-placeholder'></View>
       </View>
     );
   }
