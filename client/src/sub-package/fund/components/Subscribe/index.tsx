@@ -6,7 +6,6 @@ const ICON_CLOSE = 'cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/
 interface SubscribeProps {
   onClose?: () => void
   onSubscribe?: () => void
-  hidden?: boolean
 }
 
 export default function Subscribe(props: SubscribeProps) {

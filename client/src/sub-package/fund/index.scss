@@ -23,10 +23,12 @@
     right: 0;
     bottom: 0;
     border-top: thin #f5f5f5 solid;
+    z-index: 999;
     padding-bottom: calc(20px + env(safe-area-inset-bottom));
   }
   .summary-placeholder {
     height: 120px;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 .table {

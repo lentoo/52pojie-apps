@@ -76,7 +76,7 @@ interface FundState {
 export default class Fund extends Component<{}, FundState> {
   user_fund_db = getUserFundDb()
   openid = Taro.getStorageSync('_o')
-  timer: NodeJS.Timer | null
+  timer: number
   actionsheet_select_code: string
   constructor(props) {
     super(props)
@@ -114,8 +114,18 @@ export default class Fund extends Component<{}, FundState> {
   componentWillUnmount() {
     if (this.timer) {
       clearInterval(this.timer)
-      this.timer = null
+      this.timer = 0
     }
+  }
+  componentDidHide() {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = 0
+    }
+  }
+  componentDidShow() {
+    console.log('componentDidShow');
+    this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
   }
   onPullDownRefresh () {
     this.getFundData()
@@ -178,6 +188,13 @@ export default class Fund extends Component<{}, FundState> {
       })
   }
   searchFund = () => {
+    if (!this.state.searchValue.trim()) {
+      Taro.showToast({
+        title: '请输入基金代码',
+        icon: 'none'
+      })
+      return
+    }
     Taro.showLoading({
       title: ''
     })
@@ -268,20 +285,32 @@ export default class Fund extends Component<{}, FundState> {
   handleFloatButtonClick = () => {
     if (this.state.fab_icon === fab_icon_enum.ICON_SAVE) {
       // save
+      
       this.saveRemoteFund()
-        .finally(() => {
+        .then(() => {
           this.setState({
             fab_icon: this.state.fab_icon === fab_icon_enum.ICON_EDIT ? fab_icon_enum.ICON_SAVE : fab_icon_enum.ICON_EDIT
           })
+          if (this.timer === 0) {
+            this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
+          }
         })
     } else {
       // edit
       this.setState({
         fab_icon: this.state.fab_icon === fab_icon_enum.ICON_EDIT ? fab_icon_enum.ICON_SAVE : fab_icon_enum.ICON_EDIT
       })
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = 0
+      }
+      
     }
   }
   handleCancelClick = () => {
+    if (this.timer === 0) {
+      this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
+    }
     this.setState({
       fab_icon: fab_icon_enum.ICON_EDIT
     })
@@ -368,12 +397,17 @@ export default class Fund extends Component<{}, FundState> {
     Taro.requestSubscribeMessage({
       tmplIds: [FOUND_TEMPLATE_ID]
     }).then(res => {
+
+      if (res[FOUND_TEMPLATE_ID] === 'reject') {
+        console.log('取消订阅');
+        return Promise.reject('取消订阅')
+      }
       console.log('订阅成功', res)
       Taro.showLoading({
         title: ''
       })
       const subscribeDb = getUserFundSubscribeDb()
-      subscribeDb.where({
+      return subscribeDb.where({
           openid: this.openid
         })
         .get()
@@ -393,6 +427,10 @@ export default class Fund extends Component<{}, FundState> {
             Taro.hideLoading()
           }
         })
+    }).then(() => {
+      this.setState({
+        displaySubscribe: false
+      })
     })
   }
   render() {
@@ -405,8 +443,12 @@ export default class Fund extends Component<{}, FundState> {
     }, 0)
     return (
       <View className='fund'>
-
-        <Subscribe hidden={displaySubscribe} onSubscribe={this.handleSubscribe} />
+        {
+          displaySubscribe && <Subscribe onSubscribe={this.handleSubscribe} onClose={() => this.setState({
+            displaySubscribe: false
+          })} />
+        }
+        
 
         <AtSearchBar showActionButton placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
         <FloatButton bottom={100} right={40} icon={fab_icon} onClick={this.handleFloatButtonClick} />
@@ -445,9 +487,9 @@ export default class Fund extends Component<{}, FundState> {
                   >
                     {/* 基金名称 */}
                     <View className='table-item' onClick={() => {
-                      Taro.navigateTo({
-                        url: '/sub-package/fund/fund-detail/index?code=' + item.FCODE
-                      })
+                      // Taro.navigateTo({
+                      //   url: '/sub-package/fund/fund-detail/index?code=' + item.FCODE
+                      // })
                     }}>
                       {item.SHORTNAME}
                       <View className='fund-code'>

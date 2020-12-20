@@ -45,7 +45,7 @@ export default {
       
       pages: [
         'fund/index',
-        'fund/fund-detail/index'
+        // 'fund/fund-detail/index'
       ]
     }
   ]

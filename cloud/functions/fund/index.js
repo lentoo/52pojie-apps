@@ -88,11 +88,10 @@ async function notify(touser, fund) {
     page: '/sub-package/fund/index?r=notify',
     data: {
       thing1: { value: '自选基金估值已更新' },
-      thing2: { value: `${fund.SHORTNAME}已更新${fund.GSZZL}%` },
+      thing2: { value: `${fund.SHORTNAME}已更新` },
       date3: { value: new Date().toLocaleString() },
       thing4: { value: '点击进入小程序查看其它已更新的基金估值数据' }
-    },
-    miniprogramState: 'trial'
+    }
   })
   return result
 }
