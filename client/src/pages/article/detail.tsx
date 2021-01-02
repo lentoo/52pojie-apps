@@ -158,15 +158,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
 
     if (command === 'tools-copy-link') {
-      Taro.setClipboardData({
-        data: this.state.result!.link,
-        success: function() {
-          Taro.showToast({
-            title: '链接已复制',
-            icon: 'success'
-          })
-        }
-      })
+      this.copyLink(this.state.result?.link!)
       return
     }
 
@@ -220,9 +212,21 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       })
     }
   }
+  copyLink = (link: string) => {
+    Taro.setClipboardData({
+      data: link,
+      success: function() {
+        Taro.showToast({
+          title: '链接已复制',
+          icon: 'success'
+        })
+      }
+    })
+  }
   renderNoAuth() {
     const { result } = this.state
     if (!result) return null
+    const link = result.link
     return (
       <View className='alert-message'>
         <Image className="icon-no-auth" src="cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/icon-no-auth.svg"></Image>
@@ -233,6 +237,9 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           <Button onClick={() => {
             Taro.navigateBack()
           }} size='mini' type='primary'>返回上一页</Button>
+        </View>
+        <View className='btn'>
+          <Button onClick={() => this.copyLink(link)} size='mini' type='default'>复制链接</Button>
         </View>
       </View>
     )
@@ -309,13 +316,14 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           onToolsItemClick={this.onToolsItemClick}
           ></Tools>
 
+        <FloatButtonToTop />
         <FloatButton bottom={205} right={40} icon={ICON_MENU} onClick={() => {
           this.setState({
             openTools: true
           })
         }} />
 
-        <FloatButtonToTop />
+
       </View>
     );
   }
