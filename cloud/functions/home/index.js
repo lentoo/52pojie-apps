@@ -2,11 +2,19 @@ const axios = require('axios').default
 const cheerio = require('cheerio')
 // const Iconv = require('iconv').Iconv
 const iconv = require('iconv-lite')
+const cloud = require('wx-server-sdk')
+
+// 初始化 cloud
+cloud.init({
+  // API 调用都保持和云函数当前所在环境一致
+  env: cloud.DYNAMIC_CURRENT_ENV
+})
 /**
  * 
  */
 const HOST_NAME = 'https://www.52pojie.cn/'
 axios.defaults.timeout = 30000
+const db = cloud.database()
 async function getHtml(url) {
   const res = await axios.get(url, {
     // 以下为解决中文乱码的主要代码
@@ -322,17 +330,56 @@ exports.main = async (event, context) => {
   console.log(event)
   console.log(context)
   const { page, url, id, action } = event || {}
+  const data_cache = await db.collection('data_cache')
+    .where({
+      action: action
+    })
+    .get()
+  const action_cache_data = data_cache.data
+  let useCache = false
+  if (action_cache_data.length > 0) {
+    const last_date = action_cache_data[0].last_date
+    const result = action_cache_data[0].result
+    const now = Date.now()
+    useCache = now < last_date
+    if (useCache) {
+      return result
+    }
+  }
+  let result = null
   switch (action) {
     case 'get_home_page_data':
-      return await getHomePageData()
+      result = await getHomePageData()
+      break
     case 'get_areas_data': 
-      return await getAreasData()
+      result = await getAreasData()
+      break
     case 'get_article_detail_data':
-      return await getArticleDetailData(url, page)
+      result = await getArticleDetailData(url, page)
+      return result
     case 'get_article_detail_comments_data':
-      return await getArticleDetailComments(id, page)
+      result = await getArticleDetailComments(id, page)
+      return result
     default:
       break;
   }
-  
+  if (useCache === false) {
+    createCache(action, result, 1000 * 60 * 10)  // 缓存10分钟
+  }
+  return result
+}
+
+async function createCache(key, value, cache_time){
+  await db.collection('data_cache')
+    .where({
+      action: key
+    }).remove()
+  return db.collection('data_cache')
+    .add({
+      data: {
+        action: key,
+        result: value,
+        last_date: Date.now() + cache_time
+      }
+    })
 }

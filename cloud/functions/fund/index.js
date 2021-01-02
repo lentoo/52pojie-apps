@@ -20,6 +20,8 @@ exports.main = async (event, context) => {
   switch (action) {
     case 'action_search_fund':
       return searchFund(data.key)
+    case 'action_get_holiday':
+      return getJieJiaRi(data.date)
     default:
       return fundValuationUpdateNotify()
   }
@@ -30,9 +32,17 @@ async function searchFund(key) {
   const result = await axios.get(url)
   const datas = result.data.Datas
   if (datas.length > 0) {
-    return datas[0]
+    return {
+      code: 0,
+      data: datas[0],
+      msg: '成功'
+    }
   } else {
-    return datas
+    return {
+      code: -1,
+      data: null,
+      msg: '基金未找到，请检查是否输入有误'
+    }
   }
 }
 
@@ -94,4 +104,31 @@ async function notify(touser, fund) {
     }
   })
   return result
+}
+
+async function getJieJiaRi(date) {
+  const results = await db.collection('global_config').where({
+    type: 'tian_xing'
+  }).get()
+  if (results.data.length === 0) {
+    return {
+      code: -1,
+      data: null,
+      msg: '未配置'
+    }
+  }
+  const data = results.data[0]
+  const response = await axios.get(`http://api.tianapi.com/txapi/jiejiari/index?key=${data.config.api_key}&date=${date}`)
+  if (response.data.code === 200) {
+    return {
+      code: 0,
+      data: response.data.newslist[0]
+    }
+  } else {
+    return {
+      code: -1,
+      data: null,
+      msg: response.data.msg
+    }
+  }
 }

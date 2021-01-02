@@ -5,7 +5,6 @@ import { AtSearchBar, AtActionSheet, AtActionSheetItem } from 'taro-ui'
 import classnames from 'classnames'
 
 import FloatButton from '../../components/FloatButton'
-import Subscribe from './components/Subscribe'
 import { callCloudFunction, getUserFundDb, db, getUserFundSubscribeDb } from '../../utils'
 import './index.scss'
 
@@ -76,8 +75,13 @@ interface FundState {
 export default class Fund extends Component<{}, FundState> {
   user_fund_db = getUserFundDb()
   openid = Taro.getStorageSync('_o')
-  timer: number
+  timer: number = 0
   actionsheet_select_code: string
+
+  /**
+   * daycode	为0表示工作日、为1节假日、为2双休日、3为调休日（上班）
+   */
+  daycode: number = 0
   constructor(props) {
     super(props)
     this.state = {
@@ -91,41 +95,17 @@ export default class Fund extends Component<{}, FundState> {
       show_actionsheet: false
     }
   }
-  componentDidMount() {
-    this.getUserFundCodes()
-    this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
-
-    wx.getSetting({
-      withSubscriptions: true,
-      success: res => {
-        console.log(res.subscriptionsSetting)
-        if (res.subscriptionsSetting.itemSettings) {
-          this.setState({
-            displaySubscribe: res.subscriptionsSetting.itemSettings[FOUND_TEMPLATE_ID] === 'reject'
-          })
-        } else {
-          this.setState({
-            displaySubscribe: true
-          })
-        }
-      }
-    })
-  }
   componentWillUnmount() {
-    if (this.timer) {
-      clearInterval(this.timer)
-      this.timer = 0
-    }
+    this.stopGetData()
   }
   componentDidHide() {
-    if (this.timer) {
-      clearInterval(this.timer)
-      this.timer = 0
-    }
+    this.stopGetData()
   }
   componentDidShow() {
     console.log('componentDidShow');
-    this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
+    this.searchTodayIsHoliday()
+    this.getUserFundCodes()
+    this.startGetData()
   }
   onPullDownRefresh () {
     this.getFundData()
@@ -133,19 +113,33 @@ export default class Fund extends Component<{}, FundState> {
         Taro.stopPullDownRefresh()
       })
   }
-  whileGetFundData() {
+  startGetData = () => {
+    this.stopGetData()
+    this.timer = setInterval(this.whileGetFundData, 3000)
+  }
+  stopGetData() {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = 0
+    }
+  }
+  whileGetFundData = () => {
+    if (this.daycode !== 0) {
+      console.log('非工作日');
+      Taro.setNavigationBarTitle({
+        title: '自选基金助手(休市中)'
+      })
+      return
+    }
     const date = new Date()
     console.log(date.getHours());
     const hourse = date.getHours()
     const minutes = date.getMinutes()
     if (date.getDay() === 6 || date.getDay() === 0) {
-      if (this.timer) {
-        clearInterval(this.timer)
-        Taro.setNavigationBarTitle({
-          title: '自选基金助手(休市中)'
-        })
-        return
-      }
+      Taro.setNavigationBarTitle({
+        title: '自选基金助手(休市中)'
+      })
+      return
     }
     if (hourse < 9 || (hourse === 11 && minutes >= 31) || hourse === 12) {
       Taro.setNavigationBarTitle({
@@ -154,18 +148,35 @@ export default class Fund extends Component<{}, FundState> {
       return
     }
     if (hourse >= 15 && minutes > 2) {
-      if (this.timer) {
-        clearInterval(this.timer)
-        Taro.setNavigationBarTitle({
-          title: '自选基金助手(休市中)'
-        })
-      }
+      Taro.setNavigationBarTitle({
+        title: '自选基金助手(休市中)'
+      })
     } else {
       Taro.setNavigationBarTitle({
         title: '自选基金助手'
       })
       this.getFundData()
     }
+  }
+  
+  searchTodayIsHoliday = () => {
+    const date = new Date()
+    const toDayStr = `${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()}`
+    Taro.cloud.callFunction({
+      name: 'fund',
+      data: {
+        action: 'action_get_holiday',
+        data: {
+          date: toDayStr
+        }
+      }
+    }).then((response: any) => {
+      console.log(response);
+      
+      if (response.result && response.result.code === 0) {
+        this.daycode = response.result.data.daycode
+      }
+    })
   }
   onSearchValueChange = (value) => {
     this.setState({
@@ -206,8 +217,15 @@ export default class Fund extends Component<{}, FundState> {
       }
     }).then(res => {
       Taro.hideLoading()
-      const result = res.result as any
-
+      const response = res.result as any
+      if (response.code !== 0) {
+        Taro.showToast({
+          icon: 'none',
+          title: response.msg
+        })
+        return
+      }
+      const result = response.data
       const user_fund = this.state.user_fund
       if (user_fund && user_fund.codes.includes(result.CODE)) {
         Taro.showToast({
@@ -285,32 +303,23 @@ export default class Fund extends Component<{}, FundState> {
   handleFloatButtonClick = () => {
     if (this.state.fab_icon === fab_icon_enum.ICON_SAVE) {
       // save
-      
       this.saveRemoteFund()
         .then(() => {
           this.setState({
             fab_icon: this.state.fab_icon === fab_icon_enum.ICON_EDIT ? fab_icon_enum.ICON_SAVE : fab_icon_enum.ICON_EDIT
           })
-          if (this.timer === 0) {
-            this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
-          }
+          this.startGetData()
         })
     } else {
       // edit
       this.setState({
         fab_icon: this.state.fab_icon === fab_icon_enum.ICON_EDIT ? fab_icon_enum.ICON_SAVE : fab_icon_enum.ICON_EDIT
       })
-      if (this.timer) {
-        clearInterval(this.timer)
-        this.timer = 0
-      }
-      
+      this.stopGetData()
     }
   }
   handleCancelClick = () => {
-    if (this.timer === 0) {
-      this.timer = setInterval(this.whileGetFundData.bind(this), 3000)
-    }
+    this.startGetData()
     this.setState({
       fab_icon: fab_icon_enum.ICON_EDIT
     })
@@ -393,46 +402,46 @@ export default class Fund extends Component<{}, FundState> {
       actionsheet_title: ''
     })
   }
-  handleSubscribe = () => {
-    Taro.requestSubscribeMessage({
-      tmplIds: [FOUND_TEMPLATE_ID]
-    }).then(res => {
+  // handleSubscribe = () => {
+  //   Taro.requestSubscribeMessage({
+  //     tmplIds: [FOUND_TEMPLATE_ID]
+  //   }).then(res => {
 
-      if (res[FOUND_TEMPLATE_ID] === 'reject') {
-        console.log('取消订阅');
-        return Promise.reject('取消订阅')
-      }
-      console.log('订阅成功', res)
-      Taro.showLoading({
-        title: ''
-      })
-      const subscribeDb = getUserFundSubscribeDb()
-      return subscribeDb.where({
-          openid: this.openid
-        })
-        .get()
-        .then(result => {
-          if (result.data.length === 0) {
-            subscribeDb.add({
-              data: {
-                openid: this.openid
-              }
-            }).then(() => {
-              Taro.showToast({
-                title: '订阅成功',
-                icon: 'success'
-              })
-            })
-          } else {
-            Taro.hideLoading()
-          }
-        })
-    }).then(() => {
-      this.setState({
-        displaySubscribe: false
-      })
-    })
-  }
+  //     if (res[FOUND_TEMPLATE_ID] === 'reject') {
+  //       console.log('取消订阅');
+  //       return Promise.reject('取消订阅')
+  //     }
+  //     console.log('订阅成功', res)
+  //     Taro.showLoading({
+  //       title: ''
+  //     })
+  //     const subscribeDb = getUserFundSubscribeDb()
+  //     return subscribeDb.where({
+  //         openid: this.openid
+  //       })
+  //       .get()
+  //       .then(result => {
+  //         if (result.data.length === 0) {
+  //           subscribeDb.add({
+  //             data: {
+  //               openid: this.openid
+  //             }
+  //           }).then(() => {
+  //             Taro.showToast({
+  //               title: '订阅成功',
+  //               icon: 'success'
+  //             })
+  //           })
+  //         } else {
+  //           Taro.hideLoading()
+  //         }
+  //       })
+  //   }).then(() => {
+  //     this.setState({
+  //       displaySubscribe: false
+  //     })
+  //   })
+  // }
   render() {
     const { searchValue, fund_datas, fab_icon, displaySubscribe, actionsheet_title, show_actionsheet} = this.state
     const summary = fund_datas.reduce((prev, curr) => {
@@ -443,11 +452,11 @@ export default class Fund extends Component<{}, FundState> {
     }, 0)
     return (
       <View className='fund'>
-        {
+        {/* {
           displaySubscribe && <Subscribe onSubscribe={this.handleSubscribe} onClose={() => this.setState({
             displaySubscribe: false
           })} />
-        }
+        } */}
         
 
         <AtSearchBar showActionButton placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
@@ -466,12 +475,13 @@ export default class Fund extends Component<{}, FundState> {
         <View className='table'>
           <View className='table-headers'>
             <View className='table-header'>基金名称</View>
-            <View className='table-header'>估算净值</View>
-            <View className='table-header'>涨跌幅</View>
-            <View className='table-header'>估算收益</View>
             {
               fab_icon === fab_icon_enum.ICON_SAVE && <View className='table-header'>持有份额</View>
             }
+            <View className='table-header'>净值</View>
+            <View className='table-header'>涨跌幅</View>
+            <View className='table-header'>估算收益</View>
+            <View className='table-header'>更新时间</View>
             
           </View>
           <View className='table-body'>
@@ -481,6 +491,10 @@ export default class Fund extends Component<{}, FundState> {
                 const useGSZZL = updated ? item.NAVCHGRT : item.GSZZL
                 const useGSZ = updated ? item.NAV : item.GSZ
                 const income =  item.portion * Number(item.GSZ) * (Number(useGSZZL) / 100)
+                let time = '00:00'
+                if (item.GZTIME.includes(' ')) {
+                  time = item.GZTIME.split(' ')[1]
+                }
                 return (
                   <View className='table-column' key={item.FCODE}
                     onLongPress={() => this.handleLongPress(item)}
@@ -504,7 +518,15 @@ export default class Fund extends Component<{}, FundState> {
                     }
                     {/* 估算净值 */}
                     <View className='table-item'>
-                      {useGSZ}
+                      {item.NAV}
+                      <View className={
+                        classnames('NAVCHGRT', {
+                          red: Number(item.NAVCHGRT) > 0,
+                          green: Number(item.NAVCHGRT) < 0
+                        })
+                      }>
+                        {item.NAVCHGRT}%
+                      </View>
                     </View>
                     {/* 涨跌幅 */}
                     <View className={classnames('table-item', {
@@ -519,7 +541,10 @@ export default class Fund extends Component<{}, FundState> {
                       green: income < 0
                     })}
                     >{income.toFixed(2)}</View>
-                    
+
+                    <View className='table-item'>
+                      {time}
+                    </View>
                   </View>
                 )
               })
