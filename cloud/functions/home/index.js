@@ -196,8 +196,14 @@ async function getArticleDetailData(url, page = 1) {
 
   const $money = $main.find('.rusld cite').html() || -1
   const $hasResolve = $main.find('.rsld').length > 0
-
   let $content = $('.pcb .t_fsz')
+
+  // 若无权限
+  let $alert_message = $('#messagetext p')
+  let alert_message = ''
+  if ($alert_message) {
+    alert_message = $alert_message.text()
+  }
   if ($content.length === 0) {
     $content = $('.pcb .rwdn')
   }
@@ -257,7 +263,8 @@ async function getArticleDetailData(url, page = 1) {
     pan_links,
     hasNext: Boolean(nextUrl),
     money: $money,
-    hasResolve: $hasResolve
+    hasResolve: $hasResolve,
+    alert_message
   }
 }
 

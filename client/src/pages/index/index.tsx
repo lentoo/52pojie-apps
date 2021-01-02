@@ -35,7 +35,9 @@ export default class Index extends Component<{}, IndexComponentState> {
   }
 
   getPlateListData() {
-    Taro.showLoading()
+    Taro.showLoading({
+      title: '正在加载中...'
+    })
     return callCloudFunction({
         name: 'home',
         data: {
@@ -113,7 +115,7 @@ export default class Index extends Component<{}, IndexComponentState> {
     return (
       <View className='index'>
         {/* <Login/> */}
-        {this.renderSearchBox()}
+        {/* {this.renderSearchBox()} */}
         <View className='main'>
           {
             plate_list.map(item => (<View key={item.id}>{this.renderPlateItem(item)}</View>))

@@ -63,11 +63,11 @@ export default class Index extends Component<{}, PlateState> {
           text: '病毒救援区',
           id: 50
         },
-        {
-          src: ICON_WELFARE,
-          text: '福利经验区',
-          id: 66
-        },
+        // {
+        //   src: ICON_WELFARE,
+        //   text: '福利经验区',
+        //   id: 66
+        // },
         {
           src: ICON_EGG,
           text: '脱壳破解区',

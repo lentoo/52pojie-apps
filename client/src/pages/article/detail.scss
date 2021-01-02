@@ -126,6 +126,22 @@
   }
 }
 
+.alert-message {
+  text-align: center;
+  .icon-no-auth {
+    width: 550px; height: 550px;
+    vertical-align: middle;
+  }
+  .text {
+    margin-top: 30px;
+    color: #666;
+    font-size: 26px;
+  }
+  .btn {
+    margin-top: 40px;
+  }
+}
+
 .flex {
   display: flex;
   flex-direction: row;

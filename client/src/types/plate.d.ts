@@ -26,6 +26,7 @@ export interface Article {
   hasNext: boolean
   money: number | string
   hasResolve: boolean
+  alert_message?: string
 }
 interface DiffImageContent {
   old: string

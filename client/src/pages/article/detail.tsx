@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
-import { View, Image, RichText, Text} from '@tarojs/components'
+import { View, Image, RichText, Text, Button} from '@tarojs/components'
 
 
 import './detail.scss'
@@ -13,6 +13,7 @@ import Tools from './components/Tools'
 import { callCloudFunction } from '../../utils'
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
+
 // import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
 
 type ArticleDetailProp = {
@@ -128,9 +129,15 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           loadingText: this.hasNext ? '正在加载中' : '没有更多了'
         })
 
-        Taro.setNavigationBarTitle({
-          title: result.title
-        })
+        if (result.alert_message) {
+          Taro.setNavigationBarTitle({
+            title: '错误'
+          })
+        } else {
+          Taro.setNavigationBarTitle({
+            title: result.title
+          })
+        }
 
         Taro.hideLoading()
         Taro.hideNavigationBarLoading()
@@ -213,10 +220,30 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       })
     }
   }
+  renderNoAuth() {
+    const { result } = this.state
+    if (!result) return null
+    return (
+      <View className='alert-message'>
+        <Image className="icon-no-auth" src="cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/icon-no-auth.svg"></Image>
+        <View className='text'>
+          {result.alert_message}
+        </View>
+        <View className='btn'>
+          <Button onClick={() => {
+            Taro.navigateBack()
+          }} size='mini' type='primary'>返回上一页</Button>
+        </View>
+      </View>
+    )
+  }
   render() {
     const { result, comments, loadingText, openTools } = this.state
     if (!result) {
       return <View></View>
+    }
+    if (result.alert_message) {
+      return this.renderNoAuth()
     }
     return (
       <View className='article-detail'>
