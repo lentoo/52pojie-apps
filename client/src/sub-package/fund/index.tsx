@@ -47,6 +47,11 @@ interface IFundData {
    * 份额
    */
   portion: number
+
+  /**
+   * 估算收益
+   */
+  income?: number
 }
 
 enum fab_icon_enum {
@@ -288,12 +293,19 @@ export default class Fund extends Component<{}, FundState> {
     }).then(rawData => {
       console.log(rawData)
       Taro.hideNavigationBarLoading()
-      if (rawData.statusCode === 200) {
+      if (rawData.statusCode === 200) {        
         this.setState({
           fund_datas: rawData.data.Datas.map((item, index) => {
+            const updated = item.PDATE === item.GZTIME.split(' ')[0]
+            const portion = this.state.user_fund?.funds[index].portion || 0
+            let income = portion * Number(item.GSZ) * (Number(item.GSZZL) / 100)
+            if (updated) {
+              income = (Number(item.NAV) - Number(item.NAV) * (Number(item.NAVCHGRT) / 100)) * portion * (Number(item.NAVCHGRT) / 100)
+            }
             return {
               ...this.state.user_fund?.funds[index],
-              ...item
+              ...item,
+              income
             }
           })
         })
@@ -443,12 +455,9 @@ export default class Fund extends Component<{}, FundState> {
   //   })
   // }
   render() {
-    const { searchValue, fund_datas, fab_icon, displaySubscribe, actionsheet_title, show_actionsheet} = this.state
+    const { searchValue, fund_datas, fab_icon, actionsheet_title, show_actionsheet} = this.state
     const summary = fund_datas.reduce((prev, curr) => {
-      const updated = curr.PDATE === curr.GZTIME.split(' ')[0]
-      const useGSZZL = updated ? curr.NAVCHGRT : curr.GSZZL
-      const income =  curr.portion * Number(curr.GSZ) * (Number(useGSZZL) / 100)
-      return prev + income
+      return prev + (curr.income || 0)
     }, 0)
     return (
       <View className='fund'>
@@ -460,7 +469,7 @@ export default class Fund extends Component<{}, FundState> {
         
 
         <AtSearchBar showActionButton placeholder='请输入基金代码或名称' value={searchValue} onChange={this.onSearchValueChange} actionName='新增' onActionClick={this.searchFund}/>
-        <FloatButton bottom={100} right={40} icon={fab_icon} onClick={this.handleFloatButtonClick} />
+        <FloatButton animate={fab_icon === fab_icon_enum.ICON_EDIT} animateName='zoom' bottom={100} right={40} icon={fab_icon} onClick={this.handleFloatButtonClick} />
         <FloatButton className={
           classnames('cancel-btn', {
             'show-cancel': fab_icon === fab_icon_enum.ICON_SAVE,
@@ -482,15 +491,12 @@ export default class Fund extends Component<{}, FundState> {
             <View className='table-header'>涨跌幅</View>
             <View className='table-header'>估算收益</View>
             <View className='table-header'>更新时间</View>
-            
           </View>
           <View className='table-body'>
             {
               fund_datas.map(item => {
                 const updated = item.PDATE === item.GZTIME.split(' ')[0]
                 const useGSZZL = updated ? item.NAVCHGRT : item.GSZZL
-                const useGSZ = updated ? item.NAV : item.GSZ
-                const income =  item.portion * Number(item.GSZ) * (Number(useGSZZL) / 100)
                 let time = '00:00'
                 if (item.GZTIME.includes(' ')) {
                   time = item.GZTIME.split(' ')[1]
@@ -520,7 +526,7 @@ export default class Fund extends Component<{}, FundState> {
                     <View className='table-item'>
                       {item.NAV}
                       <View className={
-                        classnames('NAVCHGRT', {
+                        classnames('f22', {
                           red: Number(item.NAVCHGRT) > 0,
                           green: Number(item.NAVCHGRT) < 0
                         })
@@ -529,18 +535,21 @@ export default class Fund extends Component<{}, FundState> {
                       </View>
                     </View>
                     {/* 涨跌幅 */}
-                    <View className={classnames('table-item', {
-                      green: Number(useGSZZL) < 0,
-                      red: Number(useGSZZL) > 0
-                    })}>
-                      <View>{useGSZZL}% { updated && <View className='at-icon at-icon-check'></View> } </View>
+                    <View className={classnames('table-item')}>
+                      {
+                        updated && <View className='f22'>{item.GSZZL}%</View>
+                      }
+                      <View className={classnames({
+                         green: Number(useGSZZL) < 0,
+                         red: Number(useGSZZL) > 0
+                      })}>{useGSZZL}% { updated && <View className='at-icon at-icon-check'></View> } </View>
                     </View>
                     {/* 估算收益 */}
                     <View className={classnames('table-item', {
-                      red: income > 0,
-                      green: income < 0
+                      red: (item.income || 0) > 0,
+                      green: (item.income || 0) < 0
                     })}
-                    >{income.toFixed(2)}</View>
+                    >{(item.income || 0).toFixed(2)}</View>
 
                     <View className='table-item'>
                       {time}

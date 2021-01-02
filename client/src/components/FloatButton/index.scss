@@ -23,10 +23,35 @@ $btn-float-size: 90px;
   }
   &:active {
     background-color: rgba($color: #999, $alpha: .8);
-    box-shadow: 0 0 0px 10px rgba($color: #000, $alpha: .1);
+    box-shadow: 0 6px 0px 10px rgba($color: #000, $alpha: .1);
   }
   .icon {
     width: 36px;
     height: 36px;
+  }
+  &.animate {
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+    animation-duration: .3s;
+  }
+  &.animate-zoomIn {
+    animation-name: zoomIn;
+  }
+  &.animate-zoomOut {
+    animation-name: zoomOut;
+  }
+}
+
+@keyframes zoomOut {
+  to {
+    transform: scale(0);
+  }
+}
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
   }
 }
