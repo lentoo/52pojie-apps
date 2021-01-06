@@ -21,18 +21,22 @@ export function padZero(num: string | number): string {
   return num.toString()
 }
 
-if (process.env.TARO_ENV === 'weapp') {
-  Taro.cloud.init()
-}
-
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'name' | 'data' | 'slow' | 'config'>) : Promise<Taro.cloud.CallFunctionResult> {
   let retryCount = 0
-  function callFunction() {
+  if (!param.config) {
+    param.config = {
+      env: 'env-52pojie-2tc3i',
+      traceUser: true
+    }
+  }
+  async function callFunction() {
     return Taro.cloud.callFunction(param)
-      .catch(error => {
+      .catch(async error => {
         console.log(error);
         retryCount++
-        if (retryCount <= 10) {
+        if (retryCount <= 20) {
+          await delay(500)
           return callFunction()
         } else {
           Promise.reject(error)
@@ -41,7 +45,9 @@ export function callCloudFunction(param: Pick<Taro.cloud.CallFunctionParam, 'nam
   }
   return callFunction()
 }
-
+Taro.cloud.init({
+  env: 'env-52pojie-2tc3i'
+})
 const db = Taro.cloud.database()
 const users_db = db.collection('users')
 const records_db = db.collection('records')

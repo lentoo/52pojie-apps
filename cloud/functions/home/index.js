@@ -7,7 +7,7 @@ const cloud = require('wx-server-sdk')
 // 初始化 cloud
 cloud.init({
   // API 调用都保持和云函数当前所在环境一致
-  env: cloud.DYNAMIC_CURRENT_ENV
+  env: 'env-52pojie-2tc3i'
 })
 /**
  * 
@@ -57,7 +57,6 @@ async function getHtml(url) {
 
 async function getHomePageData () {
   const result = await getHtml('https://www.52pojie.cn/forum.php?_t=' + Date.now())
-
   const $ = cheerio.load(result, { decodeEntities: false })
 
   let homeTabs = $('.toptitle_7ree a')

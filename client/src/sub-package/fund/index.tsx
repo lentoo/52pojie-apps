@@ -146,7 +146,7 @@ export default class Fund extends Component<{}, FundState> {
       })
       return
     }
-    if (hourse < 9 || (hourse === 11 && minutes >= 31) || hourse === 12) {
+    if (hourse < 9 || (hourse === 11 && minutes >= 32) || hourse === 12) {
       Taro.setNavigationBarTitle({
         title: '自选基金助手(休市中)'
       })
@@ -531,18 +531,18 @@ export default class Fund extends Component<{}, FundState> {
                           green: Number(item.NAVCHGRT) < 0
                         })
                       }>
-                        {item.NAVCHGRT}%
+                        {item.NAVCHGRT}% { updated && <View className='at-icon at-icon-check'></View> }
                       </View>
                     </View>
                     {/* 涨跌幅 */}
                     <View className={classnames('table-item')}>
-                      {
+                      {/* {
                         updated && <View className='f22'>{item.GSZZL}%</View>
-                      }
+                      } */}
                       <View className={classnames({
                          green: Number(useGSZZL) < 0,
                          red: Number(useGSZZL) > 0
-                      })}>{useGSZZL}% { updated && <View className='at-icon at-icon-check'></View> } </View>
+                      })}>{item.GSZZL}% </View>
                     </View>
                     {/* 估算收益 */}
                     <View className={classnames('table-item', {

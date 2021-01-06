@@ -8,7 +8,9 @@ class App extends Component {
 
   componentDidMount () {
     if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init()
+      Taro.cloud.init(
+        { env:  'env-52pojie-2tc3i', }
+      )
     }
 
     Taro.cloud.callFunction({
