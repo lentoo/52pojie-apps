@@ -1,4 +1,26 @@
-## [1.1.1](https://https///github.com/lentoo/52pojie-apps/compare/1.1.0...1.1.1) (2021-01-02)
+## [1.1.4](https://https///github.com/lentoo/52pojie-apps/compare/1.1.3...1.1.4) (2021-01-16)
+
+
+### Features
+
+* 🎸 首页数据增加缓存、增加广告组件 ([fac576c](https://https///github.com/lentoo/52pojie-apps/commits/fac576cff9dac5e8911a4dfba30057752eb90f3e))
+
+
+
+## [1.1.2](https://https///github.com/lentoo/52pojie-apps/compare/1.1.0...1.1.2) (2021-01-02)
+
+
+
+## [1.1.3](https://https///github.com/lentoo/52pojie-apps/compare/1.1.2...1.1.3) (2021-01-06)
+
+
+### Bug Fixes
+
+* 🐛 数据访问优化 ([5fcc4e5](https://https///github.com/lentoo/52pojie-apps/commits/5fcc4e58db5b0232a716e35c16e80a3ae6292826))
+
+
+
+## [1.1.2](https://https///github.com/lentoo/52pojie-apps/compare/1.1.0...1.1.2) (2021-01-02)
 
 
 
