@@ -14,7 +14,11 @@ class App extends Component {
     }
 
     Taro.cloud.callFunction({
-      name: 'login'
+      name: 'login',
+      config: {
+        env: 'env-52pojie-2tc3i',
+        traceUser: true
+      }
     }).then(res => {
       const { openid, unionid } = res.result as any
       Taro.setStorage({
