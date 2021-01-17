@@ -4,6 +4,10 @@ import Taro, { useRouter, useReachBottom, usePullDownRefresh } from '@tarojs/tar
 
 import LoadingMore from '../../../components/LoadingMore'
 import FloatButtonToTop from '../../../components/FloatButtonToTop'
+import { callCloudFunction } from '../../../utils'
+
+import ICON_VIEWS from '../images/icon-views.png'
+import ICON_COMMENT from '../images/icon-comment.png'
 import PlateItem, { IPlateItem } from '../../../components/PlateItem'
 // import ICON_VIEWS from '../images/icon-views.png'
 // import ICON_COMMENT from '../images/icon-comment.png'
@@ -37,7 +41,7 @@ export default function PlateList() {
     if (reward) {
       requestData.reward = Number(reward) 
     }
-    return Taro.cloud.callFunction({
+    return callCloudFunction({
       name: 'plate',
       data: {
         action: link ? PlateActions.GET_PLATE_LIST_DATA_BY_GUIDE : PlateActions.GET_PLATE_LIST_DATA,

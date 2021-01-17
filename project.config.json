@@ -5,7 +5,7 @@
   "description": "吾爱破解小程序",
   "appid": "wx093e059efc0f237a",
   "setting": {
-    "urlCheck": false,
+    "urlCheck": true,
     "es6": false,
     "enhance": false,
     "postcss": false,
@@ -32,42 +32,32 @@
     "useIsolateContext": true,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
+    "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "bundle": false
   },
   "compileType": "miniprogram",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
   "condition": {
-    "search": {
-      "current": -1,
-      "list": []
-    },
-    "conversation": {
-      "current": -1,
-      "list": []
-    },
     "plugin": {
-      "current": -1,
       "list": []
     },
     "game": {
-      "current": -1,
       "list": []
     },
     "gamePlugin": {
-      "current": -1,
       "list": []
     },
     "miniprogram": {
-      "current": -1,
       "list": [
         {
-          "id": 0,
           "name": "pages/article/detail",
           "pathName": "pages/article/detail",
-          "query": "link=https://www.52pojie.cn/thread-1272325-1-1.html&type=article_detail",
+          "query": "link=https://www.52pojie.cn/thread-1342571-1-1.html&type=article_detail",
           "scene": null
         },
         {
@@ -78,10 +68,17 @@
           "scene": null
         },
         {
-          "id": -1,
-          "name": "pages/plate/list/index",
-          "pathName": "pages/plate/list/index",
-          "query": "link=https%3A%2F%2Fwww.52pojie.cn%2Fforum.php%3Fmod%3Dguide%26view%3Dnewthread&title=新鲜出炉",
+          "id": 2,
+          "name": "sub-package/fund/fund-detail/index",
+          "pathName": "sub-package/fund/fund-detail/index",
+          "query": "code=290011",
+          "scene": null
+        },
+        {
+          "id": 3,
+          "name": "sub-package/fund/index",
+          "pathName": "sub-package/fund/index",
+          "query": "",
           "scene": null
         }
       ]

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Input } from '@tarojs/components'
+import { View, Text, Input, Ad } from '@tarojs/components'
 import './index.scss'
-
+import { callCloudFunction } from '../../utils'
 
 import { Plate, PlateItem} from '../../types'
 
@@ -35,9 +35,18 @@ export default class Index extends Component<{}, IndexComponentState> {
   }
 
   getPlateListData() {
-    Taro.showLoading()
-    return Taro.cloud
-      .callFunction({
+    const _cache_result = Taro.getStorageSync('getPlateListData')
+    if (_cache_result) {
+      this.setState({
+        plate_list: _cache_result
+      })
+      Taro.showNavigationBarLoading()
+    } else {
+      Taro.showLoading({
+        title: '正在加载中...'
+      })
+    }
+    return callCloudFunction({
         name: 'home',
         data: {
           action: 'get_home_page_data'
@@ -48,9 +57,18 @@ export default class Index extends Component<{}, IndexComponentState> {
         this.setState({
           plate_list: res.result as Plate[]
         })
+        Taro.setStorage({
+          key: 'getPlateListData',
+          data: res.result
+        })
       })
       .then(() => {
         Taro.hideLoading()
+        Taro.hideNavigationBarLoading()
+      }).catch((err) => {
+        Taro.getLogManager().warn(err)
+        Taro.hideLoading()
+        Taro.hideNavigationBarLoading()
       })
   }
 
@@ -114,11 +132,22 @@ export default class Index extends Component<{}, IndexComponentState> {
     return (
       <View className='index'>
         {/* <Login/> */}
-        {this.renderSearchBox()}
+        {/* {this.renderSearchBox()} */}
         <View className='main'>
           {
             plate_list.map(item => (<View key={item.id}>{this.renderPlateItem(item)}</View>))
           }
+        </View>
+        <View style={{
+          paddingLeft: Taro.pxTransform(20),
+          paddingRight: Taro.pxTransform(20),
+          paddingBottom: Taro.pxTransform(20),
+        }}>
+          <Ad unitId="adunit-c53a9cbab9e8669f" ad-intervals={30} onLoad={() => {
+            Taro.reportAnalytics('ad', {
+              type: '首页banner广告'
+            })
+          }} />
         </View>
       </View>
     )

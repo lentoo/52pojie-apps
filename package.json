@@ -1,6 +1,6 @@
 {
   "name": "52pojie-apps",
-  "version": "1.0.7",
+  "version": "1.1.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lentoo/52pojie-apps.git"
+    "url": "git@https://github.com/lentoo/52pojie-apps.git"
   },
   "keywords": [],
   "author": "",
@@ -29,5 +29,8 @@
     "cz-conventional-changelog": "^3.3.0",
     "git-cz": "^4.7.1",
     "release-it": "^14.0.3"
+  },
+  "npm": {
+    "publish": false
   }
 }

@@ -3,6 +3,7 @@ import Taro from '@tarojs/taro'
 import { View} from '@tarojs/components';
 
 import { AtCard } from 'taro-ui'
+import { callCloudFunction as cf } from '../../../utils'
 
 import './index.scss'
 enum ANT_ACTIONS {
@@ -25,7 +26,7 @@ export default class AntManor extends Component<{}, AntManorState> {
     }
   }
   callCloudFunction = () => {
-    Taro.cloud.callFunction({
+    cf({
       name: 'ant-manor',
       data: {
         action: ANT_ACTIONS.GET_ANT_MANOR_ANSWER

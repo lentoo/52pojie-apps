@@ -8,11 +8,17 @@ class App extends Component {
 
   componentDidMount () {
     if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init()
+      Taro.cloud.init(
+        { env:  'env-52pojie-2tc3i', }
+      )
     }
 
     Taro.cloud.callFunction({
-      name: 'login'
+      name: 'login',
+      config: {
+        env: 'env-52pojie-2tc3i',
+        traceUser: true
+      }
     }).then(res => {
       const { openid, unionid } = res.result as any
       Taro.setStorage({

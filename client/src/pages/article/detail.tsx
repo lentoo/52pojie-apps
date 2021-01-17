@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
-import { View, Image, RichText, Text} from '@tarojs/components'
+import { View, Image, RichText, Text, Button} from '@tarojs/components'
 
 
 import './detail.scss'
@@ -10,8 +10,10 @@ import FloatButton from '../../components/FloatButton'
 import FloatButtonToTop from '../../components/FloatButtonToTop'
 import UserInfo from './components/UserInfo'
 import Tools from './components/Tools'
+import { callCloudFunction } from '../../utils'
 
 import ICON_MENU from '../../assets/images/commons/icon-menu.png'
+
 // import ICON_TO_TOP from '../../assets/images/commons/icon-to-top.png'
 
 type ArticleDetailProp = {
@@ -74,7 +76,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
   fetchComments() {
     const { result } = this.state
     if (!result) return
-    Taro.cloud.callFunction({
+    callCloudFunction({
       name: 'home',
       data: {
         action: 'get_article_detail_comments_data',
@@ -107,7 +109,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     })
     Taro.showNavigationBarLoading()
 
-    return Taro.cloud.callFunction({
+    return callCloudFunction({
       name: 'home',
       data: {
         action: 'get_article_detail_data',
@@ -127,9 +129,15 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           loadingText: this.hasNext ? '正在加载中' : '没有更多了'
         })
 
-        Taro.setNavigationBarTitle({
-          title: result.title
-        })
+        if (result.alert_message) {
+          Taro.setNavigationBarTitle({
+            title: '错误'
+          })
+        } else {
+          Taro.setNavigationBarTitle({
+            title: result.title
+          })
+        }
 
         Taro.hideLoading()
         Taro.hideNavigationBarLoading()
@@ -150,15 +158,7 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
     }
 
     if (command === 'tools-copy-link') {
-      Taro.setClipboardData({
-        data: this.state.result!.link,
-        success: function() {
-          Taro.showToast({
-            title: '链接已复制',
-            icon: 'success'
-          })
-        }
-      })
+      this.copyLink(this.state.result?.link!)
       return
     }
 
@@ -212,10 +212,45 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
       })
     }
   }
+  copyLink = (link: string) => {
+    Taro.setClipboardData({
+      data: link,
+      success: function() {
+        Taro.showToast({
+          title: '链接已复制',
+          icon: 'success'
+        })
+      }
+    })
+  }
+  renderNoAuth() {
+    const { result } = this.state
+    if (!result) return null
+    const link = result.link
+    return (
+      <View className='alert-message'>
+        <Image className="icon-no-auth" src="cloud://env-52pojie-2tc3i.656e-env-52pojie-2tc3i-1303107231/images/icon-no-auth.svg"></Image>
+        <View className='text'>
+          {result.alert_message}
+        </View>
+        <View className='btn'>
+          <Button onClick={() => {
+            Taro.navigateBack()
+          }} size='mini' type='primary'>返回上一页</Button>
+        </View>
+        <View className='btn'>
+          <Button onClick={() => this.copyLink(link)} size='mini' type='default'>复制链接</Button>
+        </View>
+      </View>
+    )
+  }
   render() {
     const { result, comments, loadingText, openTools } = this.state
     if (!result) {
       return <View></View>
+    }
+    if (result.alert_message) {
+      return this.renderNoAuth()
     }
     return (
       <View className='article-detail'>
@@ -281,13 +316,14 @@ export default class ArticleDetail extends Component<ArticleDetailProp, ArticleD
           onToolsItemClick={this.onToolsItemClick}
           ></Tools>
 
+        <FloatButtonToTop />
         <FloatButton bottom={205} right={40} icon={ICON_MENU} onClick={() => {
           this.setState({
             openTools: true
           })
         }} />
 
-        <FloatButtonToTop />
+
       </View>
     );
   }

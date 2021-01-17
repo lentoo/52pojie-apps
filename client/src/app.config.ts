@@ -2,7 +2,7 @@ export default {
   pages: [
     'pages/index/index',
     'pages/plate/index',
-    'pages/demo/index',
+    // 'pages/demo/index',
     'pages/article/detail',
     'pages/plate/list/index',
     'pages/me/index',
@@ -38,5 +38,15 @@ export default {
       iconPath: 'assets/images/commons/me-unselect.png',
       selectedIconPath: 'assets/images/commons/me-selected.png'
     }]
-  }
+  },
+  subpackages: [
+    {
+      root: "sub-package",
+      
+      pages: [
+        'fund/index',
+        // 'fund/fund-detail/index'
+      ]
+    }
+  ]
 }
