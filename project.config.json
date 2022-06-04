@@ -1,87 +1,87 @@
 {
-  "miniprogramRoot": "client/dist/",
-  "cloudfunctionRoot": "cloud/functions/",
-  "projectname": "52pojie-apps",
-  "description": "吾爱破解小程序",
-  "appid": "wx093e059efc0f237a",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "enhance": false,
-    "postcss": false,
-    "preloadBackgroundData": false,
-    "minified": false,
-    "newFeature": false,
-    "coverView": true,
-    "nodeModules": false,
-    "autoAudits": false,
-    "showShadowRootInWxmlPanel": true,
-    "scopeDataCheck": false,
-    "uglifyFileName": false,
-    "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "uploadWithSourceMap": true,
-    "compileHotReLoad": false,
-    "useMultiFrameRuntime": false,
-    "useApiHook": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    },
-    "useIsolateContext": true,
-    "useCompilerModule": true,
-    "userConfirmedUseCompilerModuleSwitch": false,
-    "userConfirmedBundleSwitch": false,
-    "packNpmManually": false,
-    "packNpmRelationList": [],
-    "minifyWXSS": true,
-    "bundle": false
-  },
-  "compileType": "miniprogram",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
-  "condition": {
-    "plugin": {
-      "list": []
-    },
-    "game": {
-      "list": []
-    },
-    "gamePlugin": {
-      "list": []
-    },
-    "miniprogram": {
-      "list": [
-        {
-          "name": "pages/article/detail",
-          "pathName": "pages/article/detail",
-          "query": "link=https://www.52pojie.cn/thread-1342571-1-1.html&type=article_detail",
-          "scene": null
-        },
-        {
-          "id": -1,
-          "name": "pages/me/index",
-          "pathName": "pages/me/index",
-          "query": "",
-          "scene": null
-        },
-        {
-          "id": 2,
-          "name": "sub-package/fund/fund-detail/index",
-          "pathName": "sub-package/fund/fund-detail/index",
-          "query": "code=290011",
-          "scene": null
-        },
-        {
-          "id": 3,
-          "name": "sub-package/fund/index",
-          "pathName": "sub-package/fund/index",
-          "query": "",
-          "scene": null
-        }
-      ]
-    }
-  }
+	"miniprogramRoot": "client/dist/",
+	"cloudfunctionRoot": "cloud/functions/",
+	"projectname": "52pojie-apps",
+	"description": "吾爱破解小程序",
+	"appid": "wx093e059efc0f237a",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"enhance": false,
+		"postcss": false,
+		"preloadBackgroundData": false,
+		"minified": false,
+		"newFeature": false,
+		"coverView": true,
+		"nodeModules": false,
+		"autoAudits": false,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"uglifyFileName": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"compileHotReLoad": false,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		},
+		"bundle": false,
+		"useIsolateContext": true,
+		"useCompilerModule": false,
+		"userConfirmedUseCompilerModuleSwitch": false,
+		"useMultiFrameRuntime": false,
+		"useApiHook": true,
+		"userConfirmedBundleSwitch": false,
+		"packNpmManually": false,
+		"packNpmRelationList": [],
+		"minifyWXSS": true
+	},
+	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
+	"condition": {
+		"plugin": {
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"list": []
+		},
+		"miniprogram": {
+			"list": [
+				{
+					"name": "pages/article/detail",
+					"pathName": "pages/article/detail",
+					"query": "link=https://www.52pojie.cn/thread-1342571-1-1.html&type=article_detail",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/me/index",
+					"pathName": "pages/me/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "sub-package/fund/fund-detail/index",
+					"pathName": "sub-package/fund/fund-detail/index",
+					"query": "code=290011",
+					"scene": null
+				},
+				{
+					"id": 3,
+					"name": "sub-package/fund/index",
+					"pathName": "sub-package/fund/index",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
 }
