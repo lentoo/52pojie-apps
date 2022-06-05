@@ -52,6 +52,7 @@ const db = Taro.cloud.database()
 const users_db = db.collection('users')
 const records_db = db.collection('records')
 
+
 function createTypeDbFactory(type: string) {
   let target: Taro.DB.Collection
   return function(): Taro.DB.Collection {
@@ -64,10 +65,13 @@ function createTypeDbFactory(type: string) {
 
 const getUserFundDb = createTypeDbFactory('user_funds')
 const getUserFundSubscribeDb = createTypeDbFactory('user_fund_subscribe')
+const getGlobalConfigDb = createTypeDbFactory('global_config')
 export {
   db,
   users_db,
   records_db,
+
   getUserFundDb,
-  getUserFundSubscribeDb
+  getUserFundSubscribeDb,
+  getGlobalConfigDb
 }
